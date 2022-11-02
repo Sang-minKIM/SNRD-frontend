@@ -1,48 +1,12 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import React, { useCallback, useRef } from "react";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
+import { categoryState, infoState, newBoardState } from "../atom";
 
-const Nav = styled.nav`
-  position: fixed;
-  top: 0;
-  display: flex;
-  width: 100vw;
-  height: 100px;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const Items = styled.ul`
-  height: 100%;
-  width: 30%;
-  justify-content: flex-end;
-  display: flex;
-  align-items: flex-start;
-  padding-right: 10px;
-  padding-top: 10px;
-`;
-
-const Item = styled.li`
-  padding: 10px;
-`;
-
-const Col = styled.div`
-  width: 30%;
-  display: flex;
-  align-items: center;
-  padding-left: 30px;
-`;
-
-const Logo = styled.div`
-  width: 50px;
-  height: 50px;
-  margin-right: 10px;
-  background-color: #fff;
-`;
-
-const Title = styled.h2`
-  font-size: 40px;
-`;
+import Categories from "../components/Categories";
+import Header from "../components/Header";
+import NewBoardForm from "../components/NewBoardForm";
 
 const Wrapper = styled.div`
   width: 100vw;
@@ -53,71 +17,144 @@ const Wrapper = styled.div`
   align-items: flex-start;
 `;
 
-const Categories = styled.div`
-  height: 90%;
-  width: 23%;
-  background-color: ${(props) => props.theme.white.darker};
-  margin-top: 3%;
-`;
-
-const Category = styled.div``;
-
 const Contents = styled.form`
-  background-color: ${(props) => props.theme.white.darker};
-  height: 90%;
+  background-color: ${(props) => props.theme.white.lighter};
+  height: 95%;
   width: 40%;
-  margin-top: 3%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  overflow-y: scroll;
+  border: 1px solid #e0e0e0;
 `;
 
-const Topic = styled.h3``;
+const Content = styled.div`
+  width: 90%;
+  margin: 5% auto;
+  height: fit-content;
+`;
 
-const Content = styled.input``;
+const Topic = styled.h3`
+  font-weight: 500;
+  font-size: 20px;
+`;
+
+const Text = styled.textarea`
+  width: 100%;
+  padding: 10px;
+  font-size: 15px;
+`;
+
+const ProjectName = styled.input`
+  display: block;
+  margin: 30px auto;
+  width: max-content;
+  font-size: 25px;
+  padding: 5px 0;
+  font-weight: 600;
+  text-align: center;
+`;
+const Member = styled.input`
+  display: block;
+  height: 30px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 400;
+  margin: 30px auto;
+`;
 
 const Comments = styled.form`
-  height: 90%;
+  height: 95%;
   width: 23%;
-  background-color: ${(props) => props.theme.white.darker};
-  margin-top: 3%;
+  background-color: ${(props) => props.theme.white.lighter};
+
+  border: 1px solid #e0e0e0;
 `;
 
 const Comment = styled.div``;
 
 const CommentInput = styled.input``;
 
+const Overlay = styled(motion.div)`
+  width: 100vw;
+  height: calc(100vh-100px);
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const NewBoard = styled(motion.div)`
+  background-color: ${(props) => props.theme.white.lighter};
+  border-radius: 5px;
+  width: 30%;
+  height: 30%;
+  min-height: 200px;
+  border: none;
+  position: absolute;
+`;
+
+const overlay = {
+  hidden: { backgroundColor: "rgba(0, 0, 0, 0)" },
+  visible: { backgroundColor: "rgba(0, 0, 0, 0.5)" },
+  exit: { backgroundColor: "rgba(0, 0, 0, 0)" },
+};
+
 function Home() {
-  const [isLoggedin, setIsLoggedIn] = useState(false);
+  const [newBoard, setNewBoard] = useRecoilState(newBoardState);
+  const [info, setInfo] = useRecoilState(infoState);
+  //   const textRef = useRef<any>([
+  //     React.createRef(),
+  //     React.createRef(),
+  //     React.createRef(),
+  //   ]);
+
+  //   const handleResizeHeight = useCallback(() => {
+  //     console.log(textRef.current);
+  //     textRef.current[0].current.style.height =
+  //       textRef.current[0].current.scrollHeight + "px";
+  //   }, []);
+
   return (
     <>
-      <Nav>
-        <Col>
-          <Logo />
-          <Title>수나롭다</Title>
-        </Col>
-        <Items>
-          <Item>
-            <Link to="">소개</Link>
-          </Item>
-          <Item>
-            <Link to="/boards">작업목록</Link>
-          </Item>
-          <Item>
-            <Link to="profile/:id">프로필</Link>
-          </Item>
-          {isLoggedin ? (
-            <Item>
-              <Link to="logout">로그아웃</Link>
-            </Item>
-          ) : (
-            <Item>
-              <Link to="login">로그인</Link>
-            </Item>
-          )}
-        </Items>
-      </Nav>
+      <Header />
       <Wrapper>
-        <Categories></Categories>
-        <Contents></Contents>
+        <Categories />
+        <Contents>
+          <ProjectName placeholder={info.name} />
+          <Member size={info.member.length + 10} placeholder={info.member} />
+          {/* {categories.map((category, index) => (
+            <Content key={category.topic}>
+              <Topic>{category.topic}</Topic>
+              <hr />
+              <Text
+                key={category.topic}
+                // onInput={handleResizeHeight}
+                // ref={textRef.current[index]}
+              >
+                {category.contents}
+              </Text>
+            </Content>
+          ))} */}
+        </Contents>
         <Comments></Comments>
+        <AnimatePresence>
+          {newBoard ? (
+            <>
+              <Overlay
+                variants={overlay}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                onClick={() => setNewBoard(null)}
+              ></Overlay>
+              <NewBoard layoutId={newBoard}>
+                <NewBoardForm />
+              </NewBoard>
+            </>
+          ) : null}
+        </AnimatePresence>
       </Wrapper>
     </>
   );

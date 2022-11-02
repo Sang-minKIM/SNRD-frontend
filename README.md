@@ -23,6 +23,6 @@
 - Styled-components
 - React-query
 - Recoil
-- Beautiful-dnd
+- React-beautiful-dnd
 - Framer-motion
 - React-hook-form
