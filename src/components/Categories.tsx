@@ -1,10 +1,9 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { categoryState, newBoardState } from "../atom";
 import Category from "./Category";
-import NewBoardForm from "./NewBoardForm";
 
 const Wrapper = styled.div`
   height: 95%;
@@ -20,7 +19,7 @@ const Wrapper = styled.div`
     background-color: ${(props) => props.theme.white.veryDark};
   }
   &::-webkit-scrollbar-thumb {
-    background-color: black;
+    background-color: ${(props) => props.theme.navy};
   }
 `;
 
@@ -29,7 +28,7 @@ const Board = styled.div`
 `;
 
 const BoardTitle = styled.div`
-  border-bottom: solid;
+  border-bottom: solid 3px ${(props) => props.theme.navy};
   font-size: 18px;
   font-weight: 500;
   width: 110%;
@@ -53,9 +52,10 @@ const AddCategory = styled(motion.button)`
   margin-bottom: 5px;
   border: none;
   background-color: #fff;
+  svg {
+    fill: ${(props) => props.theme.navy};
+  }
 `;
-
-const AddIcon = styled.svg``;
 
 const Info = styled.div`
   background-color: ${(props) => props.theme.white.lighter};
@@ -67,6 +67,22 @@ const Info = styled.div`
   color: black;
   border: 1px solid #e0e0e0;
   margin-top: 20px;
+`;
+
+const Column = styled.div`
+  display: flex;
+`;
+
+const ColorBox = styled.div`
+  width: 20px;
+  height: 20px;
+  border-radius: 2px;
+  background-color: ${(props) => props.theme.navy};
+`;
+
+const Text = styled.h2`
+  padding-left: 15px;
+  text-align: left;
 `;
 
 function Categories() {
@@ -90,7 +106,12 @@ function Categories() {
       <Wrapper>
         <div>
           <BoardTitle>Info</BoardTitle>
-          <Info>프로젝트 정보</Info>
+          <Info>
+            <Column>
+              <ColorBox />
+              <Text>프로젝트 정보</Text>
+            </Column>
+          </Info>
         </div>
         {Object.keys(categories).map((board, index) => (
           <Droppable key={board} droppableId={board}>
@@ -102,13 +123,12 @@ function Categories() {
                     layoutId={board}
                     onClick={() => setNewBoard(board)}
                   >
-                    ➕
-                    {/* <AddIcon
+                    <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 448 512"
                     >
                       <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
-                    </AddIcon> */}
+                    </svg>
                   </AddCategory>
                 </BoardTitle>
                 {categories[board].map((category, index) => (

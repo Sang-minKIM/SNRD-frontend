@@ -1,7 +1,8 @@
 import "styled-components";
 declare module "styled-components" {
   export interface DefaultTheme {
-    red: string;
+    navy: string;
+    grey: { darker: string; lighter: string };
     black: {
       veryDark: string;
       darker: string;
@@ -11,6 +12,12 @@ declare module "styled-components" {
       darker: string;
       lighter: string;
       veryDark: string;
+    };
+    partColor: {
+      plan: string;
+      design: string;
+      frontend: string;
+      backend: string;
     };
   }
 }

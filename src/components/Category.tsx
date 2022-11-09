@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import styled from "styled-components";
 
@@ -13,11 +13,32 @@ const Area = styled.div`
   border: 1px solid #e0e0e0;
   display: flex;
   justify-content: space-between;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+`;
+
+const Column = styled.div`
+  display: flex;
+`;
+
+const ColorBox = styled.div<IColorBoxProps>`
+  width: 20px;
+  height: 20px;
+  border-radius: 2px;
+  background-color: ${(props) => props.bgColor};
+`;
+
+const Text = styled.h2`
+  padding-left: 15px;
+  text-align: left;
 `;
 
 const DragIcon = styled.svg`
   width: 5%;
 `;
+
+interface IColorBoxProps {
+  bgColor: string;
+}
 
 interface ICategory {
   category: { topic: string; contents: string };
@@ -25,6 +46,25 @@ interface ICategory {
 }
 
 function Category({ category, index }: ICategory) {
+  const [categoryColor, setCategoryColor] = useState("");
+  useEffect(() => {
+    switch (category.contents) {
+      case "plan":
+        setCategoryColor("#56d1b5");
+        break;
+      case "design":
+        setCategoryColor("#f8c958");
+        break;
+      case "frontend":
+        setCategoryColor("#3498db");
+        break;
+      case "backend":
+        setCategoryColor("#746af1");
+        break;
+      default:
+        setCategoryColor("");
+    }
+  }, [category]);
   return (
     <Draggable index={index} key={category.topic} draggableId={category.topic}>
       {(provided) => (
@@ -33,7 +73,10 @@ function Category({ category, index }: ICategory) {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
         >
-          {category.topic}
+          <Column>
+            <ColorBox bgColor={categoryColor} />
+            <Text>{category.topic}</Text>
+          </Column>
           <DragIcon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
             <path
               fill="#e0e0e0"

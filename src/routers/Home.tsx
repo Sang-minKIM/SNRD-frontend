@@ -6,21 +6,22 @@ import { categoryState, infoState, newBoardState } from "../atom";
 
 import Categories from "../components/Categories";
 import Header from "../components/Header";
+import Navigation from "../components/Navigation";
 import NewBoardForm from "../components/NewBoardForm";
 
 const Wrapper = styled.div`
   width: 100vw;
-  height: calc(100vh - 100px);
-  margin-top: 100px;
+  height: calc(100vh - 110px);
+  margin-top: 110px;
   display: flex;
   justify-content: space-evenly;
-  align-items: flex-start;
+  align-items: flex-end;
 `;
 
 const Contents = styled.form`
   background-color: ${(props) => props.theme.white.lighter};
   height: 95%;
-  width: 40%;
+  width: 70%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -47,6 +48,7 @@ const Text = styled.textarea`
 `;
 
 const ProjectName = styled.input`
+  border: none;
   display: block;
   margin: 30px auto;
   width: max-content;
@@ -56,6 +58,7 @@ const ProjectName = styled.input`
   text-align: center;
 `;
 const Member = styled.input`
+  border: none;
   display: block;
   height: 30px;
   text-align: center;
@@ -63,18 +66,6 @@ const Member = styled.input`
   font-weight: 400;
   margin: 30px auto;
 `;
-
-const Comments = styled.form`
-  height: 95%;
-  width: 23%;
-  background-color: ${(props) => props.theme.white.lighter};
-
-  border: 1px solid #e0e0e0;
-`;
-
-const Comment = styled.div``;
-
-const CommentInput = styled.input``;
 
 const Overlay = styled(motion.div)`
   width: 100vw;
@@ -119,6 +110,7 @@ function Home() {
   return (
     <>
       <Header />
+      <Navigation />
       <Wrapper>
         <Categories />
         <Contents>
@@ -138,7 +130,7 @@ function Home() {
             </Content>
           ))} */}
         </Contents>
-        <Comments></Comments>
+
         <AnimatePresence>
           {newBoard ? (
             <>

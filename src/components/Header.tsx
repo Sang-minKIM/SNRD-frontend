@@ -7,9 +7,10 @@ const Nav = styled.nav`
   top: 0;
   display: flex;
   width: 100vw;
-  height: 100px;
+  height: 60px;
   justify-content: space-between;
   align-items: center;
+  background-color: ${(props) => props.theme.navy};
 `;
 
 const Items = styled.ul`
@@ -24,6 +25,7 @@ const Items = styled.ul`
 
 const Item = styled.li`
   padding: 10px;
+  color: white;
 `;
 
 const Col = styled.div`
@@ -34,30 +36,27 @@ const Col = styled.div`
 `;
 
 const Logo = styled.div`
-  width: 50px;
-  height: 50px;
+  width: 200px;
+  height: 40px;
   margin-right: 10px;
-  background-color: burlywood;
-`;
-
-const Title = styled.h2`
-  font-size: 40px;
+  margin-left: 30px;
+  background-color: white;
 `;
 
 function Header() {
   const [isLoggedin, setIsLoggedIn] = useState(false);
+
   return (
     <Nav>
       <Col>
         <Logo />
-        <Title>수나롭다</Title>
       </Col>
       <Items>
         <Item>
           <Link to="">소개</Link>
         </Item>
         <Item>
-          <Link to="/boards">작업목록</Link>
+          <Link to="/">프로젝트</Link>
         </Item>
         <Item>
           <Link to="profile/:id">프로필</Link>
