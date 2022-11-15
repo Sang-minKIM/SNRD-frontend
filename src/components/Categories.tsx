@@ -1,8 +1,7 @@
-import { motion } from "framer-motion";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
-import { categoryState, newBoardState } from "../atom";
+import { categoryState, newCardState } from "../atom";
 import Category from "./Category";
 
 const Wrapper = styled.div`
@@ -36,22 +35,25 @@ const BoardTitle = styled.div`
   top: 0;
   margin: 10px auto;
   padding-top: 15px;
+  padding-bottom: 5px;
   background-color: #fff;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  text-align: left;
 `;
 
-const AddCategory = styled(motion.button)`
+const AddCategory = styled.button`
   width: 30px;
   height: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-right: 10%;
-  margin-bottom: 5px;
+  position: absolute;
+  top: 10px;
+  right: 30px;
   border: none;
-  background-color: #fff;
+  background-color: transparent;
+  &:hover {
+    cursor: pointer;
+  }
   svg {
     fill: ${(props) => props.theme.navy};
   }
@@ -87,11 +89,13 @@ const Text = styled.h2`
 
 function Categories() {
   const [categories, setCategories] = useRecoilState(categoryState);
-  const [newBoard, setNewBoard] = useRecoilState(newBoardState);
+  
+  const setNewCard = useSetRecoilState(newCardState);
   const onDragEnd = (info: DropResult) => {
     const { destination, source } = info;
     console.log(info);
     if (!destination) return;
+    if (destination.droppableId !== source.droppableId) return;
     setCategories((all) => {
       const sources = [...all[source.droppableId]];
       const card = sources[source.index];
@@ -99,6 +103,7 @@ function Categories() {
       sources.splice(destination.index, 0, card);
       return { ...all, [destination.droppableId]: sources };
     });
+
   };
 
   return (
@@ -113,16 +118,13 @@ function Categories() {
             </Column>
           </Info>
         </div>
-        {Object.keys(categories).map((board, index) => (
-          <Droppable key={board} droppableId={board}>
+        {Object.keys(categories).map((part, index) => (
+          <Droppable key={part} droppableId={part}>
             {(provided) => (
               <Board ref={provided.innerRef} {...provided.droppableProps}>
                 <BoardTitle>
-                  {board}
-                  <AddCategory
-                    layoutId={board}
-                    onClick={() => setNewBoard(board)}
-                  >
+                  {part}
+                  <AddCategory onClick={() => setNewCard(part)}>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 448 512"
@@ -131,7 +133,7 @@ function Categories() {
                     </svg>
                   </AddCategory>
                 </BoardTitle>
-                {categories[board].map((category, index) => (
+                {categories[part].map((category, index) => (
                   <Category
                     category={category}
                     index={index}

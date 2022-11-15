@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import styled from "styled-components";
+import { ICategory } from "../atom";
 
 const Area = styled.div`
   background-color: ${(props) => props.theme.white.lighter};
@@ -40,15 +41,15 @@ interface IColorBoxProps {
   bgColor: string;
 }
 
-interface ICategory {
-  category: { topic: string; contents: string };
+interface ICategoryProps {
+  category: ICategory;
   index: number;
 }
 
-function Category({ category, index }: ICategory) {
+function Category({ category, index }: ICategoryProps) {
   const [categoryColor, setCategoryColor] = useState("");
   useEffect(() => {
-    switch (category.contents) {
+    switch (category.part) {
       case "plan":
         setCategoryColor("#56d1b5");
         break;

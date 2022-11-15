@@ -1,21 +1,27 @@
+import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useCallback, useRef } from "react";
-import { useRecoilState } from "recoil";
+import { useEffect } from "react";
+
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { categoryState, infoState, newBoardState } from "../atom";
+import { getCategories } from "../api";
+import { categoryState, ICategory, infoState, newCardState } from "../atom";
 
 import Categories from "../components/Categories";
 import Header from "../components/Header";
 import Navigation from "../components/Navigation";
-import NewBoardForm from "../components/NewBoardForm";
+import NewCardForm from "../components/NewCardForm";
 
 const Wrapper = styled.div`
+  min-width: 900px;
+  position: fixed;
   width: 100vw;
   height: calc(100vh - 110px);
-  margin-top: 110px;
+  top: 110px;
   display: flex;
   justify-content: space-evenly;
   align-items: flex-end;
+  overflow-x: scroll;
 `;
 
 const Contents = styled.form`
@@ -28,23 +34,6 @@ const Contents = styled.form`
   align-items: center;
   overflow-y: scroll;
   border: 1px solid #e0e0e0;
-`;
-
-const Content = styled.div`
-  width: 90%;
-  margin: 5% auto;
-  height: fit-content;
-`;
-
-const Topic = styled.h3`
-  font-weight: 500;
-  font-size: 20px;
-`;
-
-const Text = styled.textarea`
-  width: 100%;
-  padding: 10px;
-  font-size: 15px;
 `;
 
 const ProjectName = styled.input`
@@ -68,15 +57,15 @@ const Member = styled.input`
 `;
 
 const Overlay = styled(motion.div)`
-  width: 100vw;
-  height: calc(100vh-100px);
+  width: 100%;
+  height: 100%;
   position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
-const NewBoard = styled(motion.div)`
+const NewCard = styled(motion.div)`
   background-color: ${(props) => props.theme.white.lighter};
   border-radius: 5px;
   width: 30%;
@@ -84,6 +73,7 @@ const NewBoard = styled(motion.div)`
   min-height: 200px;
   border: none;
   position: absolute;
+  top: 30%;
 `;
 
 const overlay = {
@@ -93,20 +83,32 @@ const overlay = {
 };
 
 function Home() {
-  const [newBoard, setNewBoard] = useRecoilState(newBoardState);
-  const [info, setInfo] = useRecoilState(infoState);
-  //   const textRef = useRef<any>([
-  //     React.createRef(),
-  //     React.createRef(),
-  //     React.createRef(),
-  //   ]);
+  const { isLoading, data } = useQuery<ICategory[]>(
+    ["allCategories"],
+    getCategories
+  );
 
-  //   const handleResizeHeight = useCallback(() => {
-  //     console.log(textRef.current);
-  //     textRef.current[0].current.style.height =
-  //       textRef.current[0].current.scrollHeight + "px";
-  //   }, []);
-
+  const [categories, setCategories] = useRecoilState(categoryState);
+  const [newCard, setNewCard] = useRecoilState(newCardState);
+  const info = useRecoilValue(infoState);
+  useEffect(() => {
+    data &&
+      setCategories(() => {
+        const plan = data.filter(
+          (item: { part: string }) => item.part === "plan"
+        );
+        const design = data.filter(
+          (item: { part: string }) => item.part === "design"
+        );
+        const frontend = data.filter(
+          (item: { part: string }) => item.part === "frontend"
+        );
+        const backend = data.filter(
+          (item: { part: string }) => item.part === "backend"
+        );
+        return { plan, design, frontend, backend };
+      });
+  }, [data, setCategories]);
   return (
     <>
       <Header />
@@ -116,34 +118,21 @@ function Home() {
         <Contents>
           <ProjectName placeholder={info.name} />
           <Member size={info.member.length + 10} placeholder={info.member} />
-          {/* {categories.map((category, index) => (
-            <Content key={category.topic}>
-              <Topic>{category.topic}</Topic>
-              <hr />
-              <Text
-                key={category.topic}
-                // onInput={handleResizeHeight}
-                // ref={textRef.current[index]}
-              >
-                {category.contents}
-              </Text>
-            </Content>
-          ))} */}
         </Contents>
 
         <AnimatePresence>
-          {newBoard ? (
+          {newCard ? (
             <>
               <Overlay
                 variants={overlay}
                 initial="hidden"
                 animate="visible"
                 exit="exit"
-                onClick={() => setNewBoard(null)}
+                onClick={() => setNewCard(null)}
               ></Overlay>
-              <NewBoard layoutId={newBoard}>
-                <NewBoardForm />
-              </NewBoard>
+              <NewCard layoutId={newCard}>
+                <NewCardForm />
+              </NewCard>
             </>
           ) : null}
         </AnimatePresence>

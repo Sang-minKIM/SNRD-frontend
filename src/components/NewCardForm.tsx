@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
-import { newBoardState } from "../atom";
+import { newCardState } from "../atom";
 
 const Form = styled.form`
   height: 100%;
@@ -45,15 +45,15 @@ interface IForm {
   title: string;
 }
 
-export default function NewBoardForm() {
-  const setNewBoard = useSetRecoilState(newBoardState);
+export default function NewCardForm() {
+  const setNewCard = useSetRecoilState(newCardState);
   //   const setToDos = useSetRecoilState(toDoState);
   const { register, handleSubmit } = useForm<IForm>();
   const onValid = ({ title }: IForm) => {
     // setToDos((allBoards) => {
     //   return { ...allBoards, [title]: [] };
     // });
-    setNewBoard(null);
+    setNewCard(null);
   };
   return (
     <Form onSubmit={handleSubmit(onValid)}>
@@ -64,7 +64,7 @@ export default function NewBoardForm() {
       <Submit type="submit" value="Done" />
       <Button
         onClick={() => {
-          setNewBoard(null);
+          setNewCard(null);
         }}
         type="button"
         value="𝘅"

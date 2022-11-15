@@ -3,6 +3,7 @@ import { Link, useMatch } from "react-router-dom";
 import styled from "styled-components";
 
 const Nav = styled.nav`
+  min-width: 700px;
   background-color: #ffffff;
   width: 100vw;
   height: 50px;

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 const Nav = styled.nav`
+  min-width: 870px;
   position: fixed;
   top: 0;
   display: flex;
