@@ -59,16 +59,9 @@ export default function NewCardForm() {
     <Form onSubmit={handleSubmit(onValid)}>
       <Title
         {...register("title", { required: true })}
-        placeholder="Board title.."
+        placeholder="제목을 입력하세요"
       />
       <Submit type="submit" value="Done" />
-      <Button
-        onClick={() => {
-          setNewCard(null);
-        }}
-        type="button"
-        value="𝘅"
-      />
     </Form>
   );
 }

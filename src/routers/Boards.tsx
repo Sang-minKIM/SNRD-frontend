@@ -1,6 +1,9 @@
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
+import { getTasks, putTasks } from "../api";
 import { toDoState } from "../atom";
 import Card from "../components/Card";
 
@@ -15,6 +18,7 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: flex-end;
   background-color: ${(props) => props.theme.white.darker};
+  min-width: 1200px;
 `;
 
 const BoardList = styled.div`
@@ -37,10 +41,10 @@ const Board = styled.div`
 `;
 
 const Column = styled.div`
+  padding: 8px 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 50px;
   width: 100%;
   position: relative;
 `;
@@ -84,6 +88,10 @@ const BoardMenu = styled.button`
 `;
 
 const Area = styled.div<ISnapshotProps>`
+  overflow-y: scroll;
+  &::-webkit-scrollbar {
+    display: none;
+  }
   flex-grow: 1;
   padding: 10px;
   background-color: ${(props) =>
@@ -102,6 +110,18 @@ interface ISnapshotProps {
 
 function Boards() {
   const [toDos, setToDos] = useRecoilState(toDoState);
+  const { isLoading } = useQuery(["tasks"], getTasks, {
+    onSuccess: (data) => {
+      setToDos(() => data);
+    },
+  });
+  const mutation = useMutation(() => putTasks(toDos), {
+    onSuccess: (data, variables, context) => {
+      console.log("success", data, variables, context);
+    },
+  });
+
+  useEffect(() => mutation.mutate(), [toDos]);
 
   const onDragEnd = (info: DropResult) => {
     const { destination, source } = info;
@@ -134,57 +154,60 @@ function Boards() {
 
   return (
     <>
-      <Header />
       <Navigation />
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Wrapper>
-          <BoardList>
-            {Object.keys(toDos).map((boardId) => (
-              <Board key={boardId}>
-                <Column>
-                  <Border />
-                  <Title>{boardId}</Title>
-                  <Buttons>
-                    <AddBoard>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 448 512"
+      {isLoading ? (
+        <span>Loading...</span>
+      ) : (
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Wrapper>
+            <BoardList>
+              {Object.keys(toDos).map((boardId) => (
+                <Board key={boardId}>
+                  <Column>
+                    <Border />
+                    <Title>{boardId}</Title>
+                    <Buttons>
+                      <AddBoard>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 448 512"
+                        >
+                          <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
+                        </svg>
+                      </AddBoard>
+                      <BoardMenu>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 448 512"
+                        >
+                          <path d="M120 256c0 30.9-25.1 56-56 56s-56-25.1-56-56s25.1-56 56-56s56 25.1 56 56zm160 0c0 30.9-25.1 56-56 56s-56-25.1-56-56s25.1-56 56-56s56 25.1 56 56zm104 56c-30.9 0-56-25.1-56-56s25.1-56 56-56s56 25.1 56 56s-25.1 56-56 56z" />
+                        </svg>
+                      </BoardMenu>
+                    </Buttons>
+                  </Column>
+                  <Droppable droppableId={boardId}>
+                    {(provided, snapshot) => (
+                      <Area
+                        draggingFromThisWith={Boolean(
+                          snapshot.draggingFromThisWith
+                        )}
+                        isDraggingOver={snapshot.isDraggingOver}
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
                       >
-                        <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
-                      </svg>
-                    </AddBoard>
-                    <BoardMenu>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 448 512"
-                      >
-                        <path d="M120 256c0 30.9-25.1 56-56 56s-56-25.1-56-56s25.1-56 56-56s56 25.1 56 56zm160 0c0 30.9-25.1 56-56 56s-56-25.1-56-56s25.1-56 56-56s56 25.1 56 56zm104 56c-30.9 0-56-25.1-56-56s25.1-56 56-56s56 25.1 56 56s-25.1 56-56 56z" />
-                      </svg>
-                    </BoardMenu>
-                  </Buttons>
-                </Column>
-                <Droppable droppableId={boardId}>
-                  {(provided, snapshot) => (
-                    <Area
-                      draggingFromThisWith={Boolean(
-                        snapshot.draggingFromThisWith
-                      )}
-                      isDraggingOver={snapshot.isDraggingOver}
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                    >
-                      {toDos[boardId].map((todo, index) => (
-                        <Card todo={todo} key={todo.id} index={index} />
-                      ))}
-                      {provided.placeholder}
-                    </Area>
-                  )}
-                </Droppable>
-              </Board>
-            ))}
-          </BoardList>
-        </Wrapper>
-      </DragDropContext>
+                        {toDos[boardId].map((todo, index) => (
+                          <Card todo={todo} key={todo.id} index={index} />
+                        ))}
+                        {provided.placeholder}
+                      </Area>
+                    )}
+                  </Droppable>
+                </Board>
+              ))}
+            </BoardList>
+          </Wrapper>
+        </DragDropContext>
+      )}
     </>
   );
 }

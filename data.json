@@ -1,11 +1,383 @@
 {
-  "category": [
+  "category": {
+    "plan": [
+      {
+        "id": 0,
+        "categoryIndex": 0,
+        "part": "plan",
+        "topic": "배경/문제인식",
+        "contents": "## 도입\n![](https://velog.velcdn.com/images/sang-mini/post/778ec63d-1d9b-403e-89f1-3f230c05ec43/image.png)\n\n**React Query**는 통신, 캐싱, 에러처리 등에서의 많은 장점을 가지고 있다. 나는 데이터 통신 위주로 가볍게 사용해보고 정리하려 한다. loading을 useState로 만들고, useEffect로 데이터를 받아온 후 state를 바꿔주는 과정을 간단하게 대체하고 재활용 가능한 코드로 만들어준다는 것만으로도 매력적이었다. \n\n## Setting\n\n```jsx\nnpm i @tanstack/react-query\n```\n\n1. queryClient 만들기\n    \n    ```tsx\n    //index.tsx\n    import { QueryClient, QueryClientProvider } from \"@tanstack/react-query\";\n    \n    const queryClient = new QueryClient();\n    ```\n    \n2. application을 QueryClientProvider로 감싸기\n    \n    ```tsx\n    //index.tsx\n    <QueryClientProvider client={queryClient}>   \n    \t\t<App />    \n    </QueryClientProvider>\n    ```\n    \n3. fetcher 만들기\nreact query는 fetcher함수를 만들 수 있게 해준다.  기본적으로 fetcher function과 연결시켜서 isLoading 같은 함수가 불렸는지 아닌지를 알려준다. 함수가 끝났을 때는 결과 값을 data에 주고 그 data에 아주 쉬운 방법으로 접근할 수 있게 도와준다. \n    \n   ```tsx\n    \t//api.ts\n    export function getTasks() {\n    return fetch(`${BASE_URL}/task`).then((response) => response.json());\n\t\t}\n   ```\n   _다른 컴포넌트에서 import해서 사용할 수 있도록 export 해준다._\n\n## 사용하기\n- useQuery는 isLoading, data, error, isError등 많은 것에 접근할 수 있다. key와 fetcher 함수를 넣어주면 바로 사용할 수 있다. 이때 key는 array로 줄 것. (version 4 로 오면서 바뀜)\n    \n    ```jsx\n    const { isLoading, data } = useQuery([\"tasks\"], getTasks);\n    ```\n    \n    이때, 필요하다면(typescript) data의 타입을 알려준다.\n    \n    ```tsx\n\tinterface IContents {\n  \t\tid: number;\n  \t\tcategoryIndex: number;\n        \tpart: string;\n  \t\ttopic: string;\n  \t\tcontents: any;\n  \t\tcommentCounts: number;\n\t\t}\n\n     \t\t const { isLoading: contentLoading, data: contentData } = useQuery<IContents>(\n    \t\t\t[\"content\", contentId],\n   \t \t\t() => getContents(contentId)\n  \t\t);\n    ```\nreact query는 아주 강력한 캐싱 매커니즘을 가지고 있다. 만약 query의 고유한 key값을 react query에 넘겨 주었다면 react query는 캐시에 이미 data가 있는 것을 알고 loading을 보여주지 않고 페이지를 넘겨준다. \n    또, 같은 쿼리를 다른 화면이나 다른 컴포넌트에서 사용했다면 fetch가 다시 일어나지 않을 것이다.\n    \n\n - argument를 필요로 하는 fetcher function의 경우에는 익명의 함수를 만들어서 fetcher function를 return해준다.\n  ```tsx\ngetTasks\n() => getTasks()\n//두 표현이 동일한 의미이다. \n  ```\n  _ getTasks(id)로 적을경우 함수가 바로 실행되기 때문에 적절하지 못하다. _\n  \n\n ",
+        "commentCounts": 1
+      },
+      {
+        "id": 1,
+        "categoryIndex": 1,
+        "part": "plan",
+        "topic": "타겟설정",
+        "contents": "> *Use a central mediator object to handle communication between components*\n\n## Mediator\n\n* 애플리케이션은 독립된 object들로 만들어진다.\n    object간의 통신은 유지보수가 쉽고 다른 object를 건드리지 않으면서, 애플리케이션의 일부분을 안전하게 수정할 수 있는 방식으로 이루어져야한다.\n    ![](https://velog.velcdn.com/images/sang-mini/post/4d7e63eb-a41d-4211-8238-ddd0c042170c/image.png)\n* 애플리케이션의 크기가 커져가면서 더욱 더 많은 object들이 추가, 제거, 재배치된다. 이때 object들이 서로에 대해 너무 많은 정보를 아는 상태로 직접 통신하게 되면 서로간의 결합도가 높아져 바람직하지 않다. **object들이 강하게 결합되면, 다른 object들에 영향을 주지 않고 하나의 object를 수정하기가 어렵다.**\n* 우리는 object 간의 다방향 데이터를 처리해야 한다. 하지만 component가 많으면 component 간의 통신이 다소 혼란스러울 수 있다.\n* 이러한 이유로 component들이 서로 직접 통신하는 대신 mediator를 통하도록 한다.\n    (mediator가 관제탑, component가 비행기라고 생각하면 된다.)\n\n> \\_ component vs object\n> 컴포넌트가 사람이 눈으로 확인할 수 있는 결과물이라면 객체는 사람이 눈으로 확인할 수 없는 작은 단위의 사물과 같다. 객체도 독립적으로 작동할 수 있지만 보통 다른 객체와 관계를 맺어 결과물을 제출한다. 다른 객체와 관계를 맺어 하나의 모듈이 되었으면 이 모듈이 곧 컴포넌트가 되기도 한다. 객체는 컴포넌트보다는 작은 단위의 기능을 수행한다. 컴포넌트는 독립적으로 작동하는 큰 단위의 모듈이다. 객체가 모여 컴포넌트가 된다. 컴포넌트는 사람이 직접적, 물질적으로 인식할 수 있는 대상이다.\\_\n\n* <strong>Mediator pattern</strong>에서는 독립된 object들은 다른 object와 직접 통신하지 않고, <strong>Mediator</strong>를 거친다.\n    JS에서 Mediator는 보통 object literal이나 function으로 구현된다.\n    ![](https://velog.velcdn.com/images/sang-mini/post/cfcaeff3-4401-4f25-adfc-6bdfdb44a4be/image.png)\n* \\#\\#\\# 활용\n    채팅방 기능\n\n```javascript\nclass ChatRoom {\n  logMessage(user, message) {\n    const time = new Date();\n    const sender = user.getName();\n\n    console.log(`${time} [${sender}]: ${message}`);\n  }\n}\n\n class User {\n  constructor(name, chatroom) {\n    this.name = name;\n    this.chatroom = chatroom;\n  }\n\n  getName() {\n    return this.name;\n  }\n\n  send(message) {\n    this.chatroom.logMessage(this, message);\n  }\n}\n```\n\n[CodeSandBox](https://codesandbox.io/s/middleware-1-forked-jxts4w?file=/src/index.js)\n\n## Middleware\n\n* **Middleware** = middle software\n    middleware는 <strong>request와 respond 사이</strong>에 있는 contoller다.\n* express가 middleware라는 용어를 대중화하여 구체적으로 디자인 패턴을 구현했다. 이를 통해 개발자가 프레임워크의 핵심에 손대지 않고도 새로운 기능을 쉽게 만들고 배포하여 기능을 추가할 수 있도록 했다.\n* 구조\n    ![](https://velog.velcdn.com/images/sang-mini/post/e0a0ce03-d617-4f04-8602-5110aff64d88/image.png)\n* middleware에 처리를 위한 새로운 데이터가 수신되면 등록된 middleware 들이 비동기 순차 실행 흐름으로 호출된다. next 함수가 req - res 사이클에 걸려있는 다음 callback을 호출한다.\n    -각 middleware는 데이터의 추가적인 처리를 중단시킬 수 있다. callback을 호출하지 않거나 오류를 전파하여 동작한다.\n* 새로운 middleware는 use()함수를 통해 등록할 수 있다.\n\n```jsx\n    const app = require('express')()\n    \n    app.use('/', (req, res, next) => {\n      req.headers['test-header'] = 1234\n      next()\n    })\n```\n\n* \\#\\#\\# 활용\n    이 미들웨어 패턴은 여러 객체 간 다대 다의 통신을 하나의 관리 포인트를 통하도록 만들어 관계를 단순하게 만들어준다.\n\n```jsx\n    import express from \"express\";\n    \n    const app = express();\n    \n    const urlLogger = (req, res, next) => {\n      console.log(`Path: ${req.path}`);\n      next();\n    };\n    \n    const timeLogger = (req, res, next) => {\n      const today = new Date();\n      const year = today.getFullYear();\n      const month = today.getMonth() + 1;\n      const day = today.getDate();\n      const date = `${year}.${month}.${day}`;\n      console.log(`Time: ${date}`);\n      next();\n    };\n    \n    const securityLogger = (req, res, next) => {\n      req.protocol === \"https\" ? console.log(\"Secure\") : console.log(\"Insecure\");\n      next();\n    };\n    \n    const protector = (req, res) => {\n      res.end();\n    };\n    \n    app.use(urlLogger, timeLogger, securityLogger);\n    app.get(\"/\", (req, res) => res.send(\"<h1>Home</h1>\"));\n    app.get(\"/protected\", protector, (req, res) => res.send(\"<h1>Protected</h1>\"));\n    \n    app.listen(process.env.PORT, () => `Listening!✅`);\n```\n\n[ CodeSandBox](https://codesandbox.io/s/a03blueprint-forked-89y5yu?file=/src/server.js)\n\n## 장단점\n\n* 장점\n    * object들 간 수정을 하지 않고 관계를 수정할 수 있다.\n    * object들 간의 관계의 복잡도, 의존성 및 결합도를 감소시킨다.\n        다대 다의 복잡한 의존 관계를 풀어나감\n* 단점\n    * 중재자에 권한이 집중되어 있으므로 잘못된 중재자의 설계는 더 복잡한 객체를 생성할 수 있다.\n\n## 참고\n\n[Mediator/Middleware Pattern](https://www.patterns.dev/posts/mediator-pattern/)\n\n* JavaScript patterns - Stoyan Stefaonv\n* Node.js 디자인 패턴 바이블 - Mario Casciaro, Luciano Mammino",
+        "commentCounts": 1
+      },
+      {
+        "id": 2,
+        "categoryIndex": 2,
+        "part": "plan",
+        "topic": "시장조사/자료조사",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 3,
+        "categoryIndex": 3,
+        "part": "plan",
+        "topic": "솔루션",
+        "contents": "이게 왜 바로 안넘어 갈까?\n**이걸 어떻게 비동기 처리하지.........**\n이제 또 넘어가기 시작하네",
+        "commentCounts": 0
+      },
+      {
+        "id": 4,
+        "categoryIndex": 4,
+        "part": "plan",
+        "topic": "목표가 아닌 것",
+        "contents": "처음 올릴때만 안되는 건가?\n이제 될듯",
+        "commentCounts": 4
+      },
+      {
+        "id": 5,
+        "categoryIndex": 5,
+        "part": "plan",
+        "topic": "벤치마크",
+        "contents": "",
+        "commentCounts": 1
+      }
+    ],
+    "design": [
+      {
+        "id": 7,
+        "categoryIndex": 1,
+        "part": "design",
+        "topic": "Key color/visual",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 8,
+        "categoryIndex": 2,
+        "part": "design",
+        "topic": "UI sketch",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 9,
+        "categoryIndex": 3,
+        "part": "design",
+        "topic": "Wireframe",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 6,
+        "categoryIndex": 0,
+        "part": "design",
+        "topic": "Mood board",
+        "contents": "",
+        "commentCounts": 1
+      }
+    ],
+    "frontend": [
+      {
+        "id": 10,
+        "categoryIndex": 1,
+        "part": "frontend",
+        "topic": "Setting",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 11,
+        "categoryIndex": 2,
+        "part": "frontend",
+        "topic": "Home",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 12,
+        "categoryIndex": 3,
+        "part": "frontend",
+        "topic": "Other page",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 15,
+        "categoryIndex": 6,
+        "part": "frontend",
+        "topic": "Board",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 13,
+        "categoryIndex": 4,
+        "part": "frontend",
+        "topic": "Join",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 14,
+        "categoryIndex": 5,
+        "part": "frontend",
+        "topic": "Profile",
+        "contents": "",
+        "commentCounts": 1
+      }
+    ],
+    "backend": [
+      {
+        "id": 17,
+        "categoryIndex": 1,
+        "part": "backend",
+        "topic": "Router setting",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 18,
+        "categoryIndex": 2,
+        "part": "backend",
+        "topic": "DB구상",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 19,
+        "categoryIndex": 3,
+        "part": "backend",
+        "topic": "DB구현",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 20,
+        "categoryIndex": 4,
+        "part": "backend",
+        "topic": "상세기능 구현",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 16,
+        "categoryIndex": 0,
+        "part": "backend",
+        "topic": "초기설정",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 21,
+        "categoryIndex": 5,
+        "part": "backend",
+        "topic": "배포환경설정",
+        "contents": "",
+        "commentCounts": 1
+      }
+    ]
+  },
+  "task": {
+    "todo": [
+      {
+        "id": 21,
+        "categoryIndex": 5,
+        "part": "backend",
+        "topic": "배포환경설정",
+        "contents": "backend",
+        "commentCounts": 1
+      },
+      {
+        "id": 10,
+        "categoryIndex": 1,
+        "part": "frontend",
+        "topic": "Setting",
+        "contents": "개발 환경 세팅을 하고 사용할 기술스택을 적어주세요. github링크를 공유해도 좋습니다.",
+        "commentCounts": 1
+      },
+      {
+        "id": 11,
+        "categoryIndex": 2,
+        "part": "frontend",
+        "topic": "Home",
+        "contents": "메인 화면 개발의 진행상황을 사진과 설명으로 팀원들에게 공유해주세요. ",
+        "commentCounts": 1
+      },
+      {
+        "id": 18,
+        "categoryIndex": 2,
+        "part": "backend",
+        "topic": "DB구상",
+        "contents": "backend",
+        "commentCounts": 1
+      },
+      {
+        "id": 17,
+        "categoryIndex": 1,
+        "part": "backend",
+        "topic": "Router setting",
+        "contents": "backend",
+        "commentCounts": 1
+      },
+      {
+        "id": 20,
+        "categoryIndex": 4,
+        "part": "backend",
+        "topic": "상세기능 구현",
+        "contents": "backend",
+        "commentCounts": 1
+      }
+    ],
+    "doing": [
+      {
+        "id": 9,
+        "categoryIndex": 3,
+        "part": "design",
+        "topic": "Wireframe",
+        "contents": "피그마 링크를 올려주세요",
+        "commentCounts": 1
+      },
+      {
+        "id": 13,
+        "categoryIndex": 4,
+        "part": "frontend",
+        "topic": "Join",
+        "contents": "frontend",
+        "commentCounts": 1
+      },
+      {
+        "id": 14,
+        "categoryIndex": 5,
+        "part": "frontend",
+        "topic": "Profile",
+        "contents": "frontend",
+        "commentCounts": 1
+      },
+      {
+        "id": 15,
+        "categoryIndex": 6,
+        "part": "frontend",
+        "topic": "Board",
+        "contents": "frontend",
+        "commentCounts": 1
+      },
+      {
+        "id": 19,
+        "categoryIndex": 3,
+        "part": "backend",
+        "topic": "DB구현",
+        "contents": "backend",
+        "commentCounts": 1
+      }
+    ],
+    "review": [
+      {
+        "id": 8,
+        "categoryIndex": 2,
+        "part": "design",
+        "topic": "UI sketch",
+        "contents": "대략적인 UI 스케치를 하고 팀원들과 공유해 보세요",
+        "commentCounts": 1
+      },
+      {
+        "id": 2,
+        "categoryIndex": 2,
+        "part": "plan",
+        "topic": "시장조사/자료조사",
+        "contents": "피드백 받고 싶은 질문을 작성해 주세요. Stakeholder들이 읽고서 자주 질문할만한 내용을 미리 뽑아서 직접 답변을 적어도 좋습니다.",
+        "commentCounts": 1
+      },
+      {
+        "id": 5,
+        "categoryIndex": 5,
+        "part": "plan",
+        "topic": "벤치마크",
+        "contents": "다른 서비스 제공자는 이 문제를 어떻게 풀고 있나요? 우리가 참고해야할 것은 무엇이고, 우리와 다른 것은 어떤 것인가요?",
+        "commentCounts": 1
+      },
+      {
+        "id": 6,
+        "categoryIndex": 0,
+        "part": "design",
+        "topic": "Mood board",
+        "contents": "원하는 분위기의 샘플들의 사진을 넣어주세요",
+        "commentCounts": 1
+      },
+      {
+        "id": 0,
+        "categoryIndex": 0,
+        "part": "plan",
+        "topic": "배경/문제인식",
+        "contents": "'왜' 이번 작업을 하려 하나요? 동기는 무엇인지, 이전에 비슷한 시도가 있었는지, 있었다면 그때는 어떤 사유로 해결하지 못했는지 등 맥락 파악을 위한 작업 배경을 작성해 주세요.",
+        "commentCounts": 0
+      },
+      {
+        "id": 4,
+        "categoryIndex": 4,
+        "part": "plan",
+        "topic": "목표가 아닌 것",
+        "contents": "목표가 아닌 것은 프로젝트에 연관되어 있으나 의도적으로 하지 않거나 해결하지 않으려는 것입니다. 목표가 아닌 것을 잘 정의해야 '이것도 같이 하면 좋겠다'는 의견에 휘둘리지 않을 수 있습니다. ",
+        "commentCounts": 4
+      },
+      {
+        "id": 3,
+        "categoryIndex": 3,
+        "part": "plan",
+        "topic": "솔루션",
+        "contents": "고객의 문제를 어떻게 해결하고자 하나요? 이해를 돕기 위한 간단한 스케치는 첨부해도 좋습니다. 그 이상의 와이어프레임이나 디자인 결과물을 첨부하지 마세요.",
+        "commentCounts": 0
+      }
+    ],
+    "done": [
+      {
+        "id": 1,
+        "categoryIndex": 1,
+        "part": "plan",
+        "topic": "타겟설정",
+        "contents": "해결하고 싶은 문제의 고객은 누구인가요? 유저 스토리 형태로 먼저 작성해 주세요 (ex. 고객은 ~ )",
+        "commentCounts": 1
+      },
+      {
+        "id": 16,
+        "categoryIndex": 0,
+        "part": "backend",
+        "topic": "초기설정",
+        "contents": "backend",
+        "commentCounts": 1
+      },
+      {
+        "id": 7,
+        "categoryIndex": 1,
+        "part": "design",
+        "topic": "Key color/visual",
+        "contents": "서비스에 사용될 컬러들은 어떤 것인가요?",
+        "commentCounts": 1
+      },
+      {
+        "id": 12,
+        "categoryIndex": 3,
+        "part": "frontend",
+        "topic": "Other page",
+        "contents": "나머지 화면들의 진행상황도 사진과 함께 알려주세요. 화면별로 새로운 토픽을 만들어 자유롭게 팀원들과 공유하세요.",
+        "commentCounts": 1
+      }
+    ]
+  },
+  "result": [
     {
       "id": 0,
       "categoryIndex": 0,
       "part": "plan",
       "topic": "배경/문제인식",
-      "contents": "'왜' 이번 작업을 하려 하나요? 동기는 무엇인지, 이전에 비슷한 시도가 있었는지, 있었다면 그때는 어떤 사유로 해결하지 못했는지 등 맥락 파악을 위한 작업 배경을 작성해 주세요.",
+      "contents": "# 테스트",
       "commentCounts": 0
     },
     {
@@ -13,7 +385,7 @@
       "categoryIndex": 1,
       "part": "plan",
       "topic": "타겟설정",
-      "contents": "해결하고 싶은 문제의 고객은 누구인가요? 유저 스토리 형태로 먼저 작성해 주세요 (ex. 고객은 ~ )",
+      "contents": "## 도입\n![](https://velog.velcdn.com/images/sang-mini/post/778ec63d-1d9b-403e-89f1-3f230c05ec43/image.png)\n\n**React Query**는 통신, 캐싱, 에러처리 등에서의 많은 장점을 가지고 있다. 나는 데이터 통신 위주로 가볍게 사용해보고 정리하려 한다. loading을 useState로 만들고, useEffect로 데이터를 받아온 후 state를 바꿔주는 과정을 간단하게 대체하고 재활용 가능한 코드로 만들어준다는 것만으로도 매력적이었다. \n\n## Setting\n\n```jsx\nnpm i @tanstack/react-query\n```\n\n1. queryClient 만들기\n    \n    ```tsx\n    //index.tsx\n    import { QueryClient, QueryClientProvider } from \"@tanstack/react-query\";\n    \n    const queryClient = new QueryClient();\n    ```\n    \n2. application을 QueryClientProvider로 감싸기\n    \n    ```tsx\n    //index.tsx\n    <QueryClientProvider client={queryClient}>   \n    \t\t<App />    \n    </QueryClientProvider>\n    ```\n    \n3. fetcher 만들기\nreact query는 fetcher함수를 만들 수 있게 해준다.  기본적으로 fetcher function과 연결시켜서 isLoading 같은 함수가 불렸는지 아닌지를 알려준다. 함수가 끝났을 때는 결과 값을 data에 주고 그 data에 아주 쉬운 방법으로 접근할 수 있게 도와준다. \n    \n   ```tsx\n    \t//api.ts\n    export function getTasks() {\n    return fetch(`${BASE_URL}/task`).then((response) => response.json());\n\t\t}\n   ```\n   _다른 컴포넌트에서 import해서 사용할 수 있도록 export 해준다._\n\n## 사용하기\n- useQuery는 isLoading, data, error, isError등 많은 것에 접근할 수 있다. key와 fetcher 함수를 넣어주면 바로 사용할 수 있다. 이때 key는 array로 줄 것. (version 4 로 오면서 바뀜)\n    \n    ```jsx\n    const { isLoading, data } = useQuery([\"tasks\"], getTasks);\n    ```\n    \n    이때, 필요하다면(typescript) data의 타입을 알려준다.\n    \n    ```tsx\n\tinterface IContents {\n  \t\tid: number;\n  \t\tcategoryIndex: number;\n        \tpart: string;\n  \t\ttopic: string;\n  \t\tcontents: any;\n  \t\tcommentCounts: number;\n\t\t}\n\n     \t\t const { isLoading: contentLoading, data: contentData } = useQuery<IContents>(\n    \t\t\t[\"content\", contentId],\n   \t \t\t() => getContents(contentId)\n  \t\t);\n    ```\nreact query는 아주 강력한 캐싱 매커니즘을 가지고 있다. 만약 query의 고유한 key값을 react query에 넘겨 주었다면 react query는 캐시에 이미 data가 있는 것을 알고 loading을 보여주지 않고 페이지를 넘겨준다. \n    또, 같은 쿼리를 다른 화면이나 다른 컴포넌트에서 사용했다면 fetch가 다시 일어나지 않을 것이다.\n    \n\n - argument를 필요로 하는 fetcher function의 경우에는 익명의 함수를 만들어서 fetcher function를 return해준다.\n  ```tsx\ngetTasks\n() => getTasks()\n//두 표현이 동일한 의미이다. \n  ```\n  _ getTasks(id)로 적을경우 함수가 바로 실행되기 때문에 적절하지 못하다. _\n  \n\n ",
       "commentCounts": 1
     },
     {
@@ -21,7 +393,7 @@
       "categoryIndex": 2,
       "part": "plan",
       "topic": "시장조사/자료조사",
-      "contents": "피드백 받고 싶은 질문을 작성해 주세요. Stakeholder들이 읽고서 자주 질문할만한 내용을 미리 뽑아서 직접 답변을 적어도 좋습니다.",
+      "contents": "",
       "commentCounts": 1
     },
     {
@@ -29,7 +401,7 @@
       "categoryIndex": 3,
       "part": "plan",
       "topic": "솔루션",
-      "contents": "고객의 문제를 어떻게 해결하고자 하나요? 이해를 돕기 위한 간단한 스케치는 첨부해도 좋습니다. 그 이상의 와이어프레임이나 디자인 결과물을 첨부하지 마세요.",
+      "contents": "이게 왜 바로 안넘어 갈까?\n**이걸 어떻게 비동기 처리하지.........**\n이제 또 넘어가기 시작하네",
       "commentCounts": 0
     },
     {
@@ -37,7 +409,7 @@
       "categoryIndex": 4,
       "part": "plan",
       "topic": "목표가 아닌 것",
-      "contents": "목표가 아닌 것은 프로젝트에 연관되어 있으나 의도적으로 하지 않거나 해결하지 않으려는 것입니다. 목표가 아닌 것을 잘 정의해야 '이것도 같이 하면 좋겠다'는 의견에 휘둘리지 않을 수 있습니다. ",
+      "contents": "처음 올릴때만 안되는 건가?\n이제 될듯",
       "commentCounts": 4
     },
     {
@@ -45,7 +417,7 @@
       "categoryIndex": 5,
       "part": "plan",
       "topic": "벤치마크",
-      "contents": "다른 서비스 제공자는 이 문제를 어떻게 풀고 있나요? 우리가 참고해야할 것은 무엇이고, 우리와 다른 것은 어떤 것인가요?",
+      "contents": "",
       "commentCounts": 1
     },
     {
@@ -53,7 +425,7 @@
       "categoryIndex": 0,
       "part": "design",
       "topic": "Mood board",
-      "contents": "원하는 분위기의 샘플들의 사진을 넣어주세요",
+      "contents": "",
       "commentCounts": 1
     },
     {
@@ -61,7 +433,7 @@
       "categoryIndex": 1,
       "part": "design",
       "topic": "Key color/visual",
-      "contents": "서비스에 사용될 컬러들은 어떤 것인가요?",
+      "contents": "# 테스트 중임\n\n\n<br>\n",
       "commentCounts": 1
     },
     {
@@ -69,7 +441,7 @@
       "categoryIndex": 2,
       "part": "design",
       "topic": "UI sketch",
-      "contents": "대략적인 UI 스케치를 하고 팀원들과 공유해 보세요",
+      "contents": "",
       "commentCounts": 1
     },
     {
@@ -77,7 +449,7 @@
       "categoryIndex": 3,
       "part": "design",
       "topic": "Wireframe",
-      "contents": "피그마 링크를 올려주세요",
+      "contents": "",
       "commentCounts": 1
     },
     {
@@ -85,7 +457,7 @@
       "categoryIndex": 1,
       "part": "frontend",
       "topic": "Setting",
-      "contents": "개발 환경 세팅을 하고 사용할 기술스택을 적어주세요. github링크를 공유해도 좋습니다.",
+      "contents": "",
       "commentCounts": 1
     },
     {
@@ -93,7 +465,7 @@
       "categoryIndex": 2,
       "part": "frontend",
       "topic": "Home",
-      "contents": "메인 화면 개발의 진행상황을 사진과 설명으로 팀원들에게 공유해주세요. ",
+      "contents": "",
       "commentCounts": 1
     },
     {
@@ -101,7 +473,7 @@
       "categoryIndex": 3,
       "part": "frontend",
       "topic": "Other page",
-      "contents": "나머지 화면들의 진행상황도 사진과 함께 알려주세요. 화면별로 새로운 토픽을 만들어 자유롭게 팀원들과 공유하세요.",
+      "contents": "",
       "commentCounts": 1
     },
     {
@@ -109,7 +481,7 @@
       "categoryIndex": 4,
       "part": "frontend",
       "topic": "Join",
-      "contents": "frontend",
+      "contents": "",
       "commentCounts": 1
     },
     {
@@ -117,7 +489,7 @@
       "categoryIndex": 5,
       "part": "frontend",
       "topic": "Profile",
-      "contents": "frontend",
+      "contents": "",
       "commentCounts": 1
     },
     {
@@ -125,7 +497,7 @@
       "categoryIndex": 6,
       "part": "frontend",
       "topic": "Board",
-      "contents": "frontend",
+      "contents": "",
       "commentCounts": 1
     },
     {
@@ -133,7 +505,7 @@
       "categoryIndex": 0,
       "part": "backend",
       "topic": "초기설정",
-      "contents": "backend",
+      "contents": "",
       "commentCounts": 1
     },
     {
@@ -141,7 +513,7 @@
       "categoryIndex": 1,
       "part": "backend",
       "topic": "Router setting",
-      "contents": "backend",
+      "contents": "",
       "commentCounts": 1
     },
     {
@@ -149,7 +521,7 @@
       "categoryIndex": 2,
       "part": "backend",
       "topic": "DB구상",
-      "contents": "backend",
+      "contents": "",
       "commentCounts": 1
     },
     {
@@ -157,7 +529,7 @@
       "categoryIndex": 3,
       "part": "backend",
       "topic": "DB구현",
-      "contents": "backend",
+      "contents": "",
       "commentCounts": 1
     },
     {
@@ -165,7 +537,7 @@
       "categoryIndex": 4,
       "part": "backend",
       "topic": "상세기능 구현",
-      "contents": "backend",
+      "contents": "",
       "commentCounts": 1
     },
     {
@@ -173,8 +545,194 @@
       "categoryIndex": 5,
       "part": "backend",
       "topic": "배포환경설정",
-      "contents": "backend",
+      "contents": "",
       "commentCounts": 1
     }
-  ]
+  ],
+  "backup": {
+    "plan": [
+      {
+        "id": 0,
+        "categoryIndex": 0,
+        "part": "plan",
+        "topic": "배경/문제인식",
+        "contents": "",
+        "commentCounts": 0
+      },
+      {
+        "id": 1,
+        "categoryIndex": 1,
+        "part": "plan",
+        "topic": "타겟설정",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 2,
+        "categoryIndex": 2,
+        "part": "plan",
+        "topic": "시장조사/자료조사",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 3,
+        "categoryIndex": 3,
+        "part": "plan",
+        "topic": "솔루션",
+        "contents": "이게 왜 바로 안넘어 갈까?\n**이걸 어떻게 비동기 처리하지.........**\n이제 또 넘어가기 시작하네",
+        "commentCounts": 0
+      },
+      {
+        "id": 4,
+        "categoryIndex": 4,
+        "part": "plan",
+        "topic": "목표가 아닌 것",
+        "contents": "처음 올릴때만 안되는 건가?\n이제 될듯",
+        "commentCounts": 4
+      },
+      {
+        "id": 5,
+        "categoryIndex": 5,
+        "part": "plan",
+        "topic": "벤치마크",
+        "contents": "",
+        "commentCounts": 1
+      }
+    ],
+    "design": [
+      {
+        "id": 6,
+        "categoryIndex": 0,
+        "part": "design",
+        "topic": "Mood board",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 7,
+        "categoryIndex": 1,
+        "part": "design",
+        "topic": "Key color/visual",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 8,
+        "categoryIndex": 2,
+        "part": "design",
+        "topic": "UI sketch",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 9,
+        "categoryIndex": 3,
+        "part": "design",
+        "topic": "Wireframe",
+        "contents": "",
+        "commentCounts": 1
+      }
+    ],
+    "frontend": [
+      {
+        "id": 10,
+        "categoryIndex": 1,
+        "part": "frontend",
+        "topic": "Setting",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 11,
+        "categoryIndex": 2,
+        "part": "frontend",
+        "topic": "Home",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 12,
+        "categoryIndex": 3,
+        "part": "frontend",
+        "topic": "Other page",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 13,
+        "categoryIndex": 4,
+        "part": "frontend",
+        "topic": "Join",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 14,
+        "categoryIndex": 5,
+        "part": "frontend",
+        "topic": "Profile",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 15,
+        "categoryIndex": 6,
+        "part": "frontend",
+        "topic": "Board",
+        "contents": "",
+        "commentCounts": 1
+      }
+    ],
+    "backend": [
+      {
+        "id": 16,
+        "categoryIndex": 0,
+        "part": "backend",
+        "topic": "초기설정",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 17,
+        "categoryIndex": 1,
+        "part": "backend",
+        "topic": "Router setting",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 18,
+        "categoryIndex": 2,
+        "part": "backend",
+        "topic": "DB구상",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 19,
+        "categoryIndex": 3,
+        "part": "backend",
+        "topic": "DB구현",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 20,
+        "categoryIndex": 4,
+        "part": "backend",
+        "topic": "상세기능 구현",
+        "contents": "",
+        "commentCounts": 1
+      },
+      {
+        "id": 21,
+        "categoryIndex": 5,
+        "part": "backend",
+        "topic": "배포환경설정",
+        "contents": "",
+        "commentCounts": 1
+      }
+    ]
+  }
 }

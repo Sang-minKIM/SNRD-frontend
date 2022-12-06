@@ -1,6 +1,9 @@
+import { useMutation } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
+import { putCategories } from "../api";
 import { categoryState, newCardState } from "../atom";
 import Category from "./Category";
 
@@ -82,20 +85,25 @@ const ColorBox = styled.div`
   background-color: ${(props) => props.theme.navy};
 `;
 
-const Text = styled.h2`
+const Text = styled.span`
   padding-left: 15px;
   text-align: left;
 `;
 
 function Categories() {
   const [categories, setCategories] = useRecoilState(categoryState);
-  
   const setNewCard = useSetRecoilState(newCardState);
+  const mutation = useMutation(() => putCategories(categories), {
+    onSuccess: (data, variables, context) => {
+      console.log("success", data, variables, context);
+    },
+  });
   const onDragEnd = (info: DropResult) => {
     const { destination, source } = info;
-    console.log(info);
+
     if (!destination) return;
     if (destination.droppableId !== source.droppableId) return;
+
     setCategories((all) => {
       const sources = [...all[source.droppableId]];
       const card = sources[source.index];
@@ -103,8 +111,9 @@ function Categories() {
       sources.splice(destination.index, 0, card);
       return { ...all, [destination.droppableId]: sources };
     });
-
   };
+
+  useEffect(() => mutation.mutate(), [categories]);
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>

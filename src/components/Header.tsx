@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import logo from "../assets/logo.svg";
 
 const Nav = styled.nav`
   min-width: 870px;
@@ -12,6 +13,7 @@ const Nav = styled.nav`
   justify-content: space-between;
   align-items: center;
   background-color: ${(props) => props.theme.navy};
+  box-shadow: 0 3px 1px 0 rgba(0, 0, 0, 0.1);
 `;
 
 const Items = styled.ul`
@@ -36,21 +38,23 @@ const Col = styled.div`
   padding-left: 30px;
 `;
 
-const Logo = styled.div`
-  width: 200px;
-  height: 40px;
+const Logo = styled.img`
+  width: 138px;
+  height: 35px;
+  margin-bottom: 1px;
   margin-right: 10px;
-  margin-left: 30px;
-  background-color: white;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 function Header() {
   const [isLoggedin, setIsLoggedIn] = useState(false);
-
+  const navigate = useNavigate();
   return (
     <Nav>
       <Col>
-        <Logo />
+        <Logo src={logo} onClick={() => navigate("/")} />
       </Col>
       <Items>
         <Item>

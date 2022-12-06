@@ -28,7 +28,7 @@ const ColorBox = styled.div<IColorBoxProps>`
   background-color: ${(props) => props.bgColor};
 `;
 
-const Text = styled.h2`
+const Text = styled.span`
   padding-left: 15px;
   text-align: left;
 `;
