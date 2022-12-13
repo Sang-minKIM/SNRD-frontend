@@ -7,7 +7,6 @@ export function getCategories() {
 }
 
 export function putCategories(newCategories: ICategoryState) {
-  console.log(newCategories);
   return fetch(`${BASE_URL}/category`, {
     method: "PUT",
     headers: {
@@ -56,4 +55,14 @@ export function postContents({ contentId, posting }: IContentsProp) {
     },
     body: JSON.stringify(posting),
   }).then((response) => response.json());
+}
+
+export function getUser(userId: string | undefined) {
+  return fetch(`${BASE_URL}/user/${userId}`).then((response) =>
+    response.json()
+  );
+}
+
+export function getProject() {
+  return fetch(`${BASE_URL}/project`).then((response) => response.json());
 }

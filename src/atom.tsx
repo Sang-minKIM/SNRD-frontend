@@ -61,3 +61,8 @@ export const newCardState = atom<string | null>({
   key: "new",
   default: null,
 });
+
+export const activeState = atom({
+  key: "active",
+  default: "0",
+});

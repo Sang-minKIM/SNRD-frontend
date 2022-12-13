@@ -14,7 +14,7 @@ import {
 import Categories from "../components/Categories";
 import Header from "../components/Header";
 import Navigation from "../components/Navigation";
-import NewCardForm from "../components/NewCardForm";
+import { NewCategoryForm } from "../components/NewCardForm";
 import { OnePager } from "../components/OnePager";
 
 const Wrapper = styled.div`
@@ -29,7 +29,7 @@ const Wrapper = styled.div`
   overflow-x: scroll;
 `;
 
-const Overlay = styled(motion.div)`
+export const Overlay = styled(motion.div)`
   width: 100%;
   height: 100vh;
   position: absolute;
@@ -39,7 +39,7 @@ const Overlay = styled(motion.div)`
   bottom: 0;
 `;
 
-const NewCard = styled(motion.div)`
+export const NewCard = styled(motion.div)`
   background-color: ${(props) => props.theme.white.lighter};
   border-radius: 5px;
   width: 30%;
@@ -50,13 +50,13 @@ const NewCard = styled(motion.div)`
   top: 30%;
 `;
 
-const overlayVariant = {
+export const overlayVariant = {
   hidden: { backgroundColor: "rgba(0, 0, 0, 0)" },
   visible: { backgroundColor: "rgba(0, 0, 0, 0.5)" },
   exit: { backgroundColor: "rgba(0, 0, 0, 0)" },
 };
 
-const newCardVariant = {
+export const newCardVariant = {
   hidden: { scale: 0 },
   visible: { scale: 1 },
   exit: { scale: 0 },
@@ -66,7 +66,7 @@ function Home() {
   const setCategories = useSetRecoilState(categoryState);
   const [newCard, setNewCard] = useRecoilState(newCardState);
 
-  const { isLoading } = useQuery<ICategoryState>(
+  const { isLoading, data } = useQuery<ICategoryState>(
     ["allCategories"],
     getCategories,
     {
@@ -120,7 +120,7 @@ function Home() {
                   animate="visible"
                   exit="exit"
                 >
-                  <NewCardForm />
+                  <NewCategoryForm />
                 </NewCard>
               </>
             ) : null}

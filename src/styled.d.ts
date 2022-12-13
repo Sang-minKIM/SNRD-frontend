@@ -2,7 +2,7 @@ import "styled-components";
 declare module "styled-components" {
   export interface DefaultTheme {
     navy: string;
-    grey: { darker: string; lighter: string };
+    grey: { darker: string; lighter: string; veryLight: string };
     black: {
       veryDark: string;
       darker: string;

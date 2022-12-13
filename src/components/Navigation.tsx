@@ -52,11 +52,11 @@ export default function Navigation() {
         <Item>
           <Link to="/boards">보드{boardMatch && <Bar layoutId="bar" />}</Link>
         </Item>
-        <Item>
+        {/* <Item>
           <Link to="/message">
-            메세지{messageMatch && <Bar layoutId="bar" />}
+            메모장{messageMatch && <Bar layoutId="bar" />}
           </Link>
-        </Item>
+        </Item> */}
       </Items>
     </Nav>
   );

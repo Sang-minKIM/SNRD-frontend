@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Draggable } from "react-beautiful-dnd";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { ICategory } from "../atom";
+import { activeState, ICategory } from "../atom";
+import styles from "../css/Active.module.css";
 
 const Area = styled.div`
   background-color: ${(props) => props.theme.white.lighter};
@@ -11,7 +13,7 @@ const Area = styled.div`
   font-size: larger;
   font-weight: 500;
   color: black;
-  border: 1px solid #e0e0e0;
+  /* border: 1px solid #e0e0e0; */
   display: flex;
   justify-content: space-between;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
@@ -48,6 +50,7 @@ interface ICategoryProps {
 
 function Category({ category, index }: ICategoryProps) {
   const [categoryColor, setCategoryColor] = useState("");
+  const active = useRecoilValue(activeState);
   useEffect(() => {
     switch (category.part) {
       case "plan":
@@ -70,6 +73,9 @@ function Category({ category, index }: ICategoryProps) {
     <Draggable index={index} key={category.topic} draggableId={category.topic}>
       {(provided) => (
         <Area
+          className={
+            active === category.id + "" ? styles.active : styles.category
+          }
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}

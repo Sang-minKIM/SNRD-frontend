@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
-import { useEffect } from "react";
+
+import { useEffect, useRef } from "react";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
@@ -8,7 +9,7 @@ import { categoryState, newCardState } from "../atom";
 import Category from "./Category";
 
 const Wrapper = styled.div`
-  height: 95%;
+  height: 97%;
   width: 23%;
   background-color: ${(props) => props.theme.white.lighter};
   padding: 20px;
@@ -35,12 +36,13 @@ const BoardTitle = styled.div`
   font-weight: 500;
   width: 110%;
   position: sticky;
-  top: 0;
+  top: -1px;
   margin: 10px auto;
   padding-top: 15px;
   padding-bottom: 5px;
   background-color: #fff;
   text-align: left;
+  z-index: 10;
 `;
 
 const AddCategory = styled.button`
@@ -51,7 +53,7 @@ const AddCategory = styled.button`
   align-items: center;
   position: absolute;
   top: 10px;
-  right: 30px;
+  right: 8%;
   border: none;
   background-color: transparent;
   &:hover {

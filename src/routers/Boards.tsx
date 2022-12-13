@@ -1,18 +1,21 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { AnimatePresence } from "framer-motion";
 import { useEffect } from "react";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 import { getTasks, putTasks } from "../api";
-import { toDoState } from "../atom";
+import { newCardState, toDoState } from "../atom";
 import Card from "../components/Card";
-
-import Header from "../components/Header";
 import Navigation from "../components/Navigation";
+import { NewCardForm } from "../components/NewCardForm";
+import { TrashCan } from "../components/TrashCan";
+import { NewCard, newCardVariant, Overlay, overlayVariant } from "./Home";
 
 const Wrapper = styled.div`
+  position: fixed;
   width: 100vw;
-  height: calc(100vh - 110px);
+  height: calc(100vh - 90px);
   margin-top: 110px;
   display: flex;
   justify-content: center;
@@ -27,7 +30,7 @@ const BoardList = styled.div`
   background-color: #fff;
   justify-content: space-evenly;
   align-items: flex-end;
-  height: 95%;
+  height: 97%;
   width: 97%;
 `;
 const Board = styled.div`
@@ -58,7 +61,7 @@ const Border = styled.div`
   left: 0;
 `;
 
-const Title = styled.h2`
+const Title = styled.span`
   padding-left: 1px;
   text-align: left;
   font-weight: 700;
@@ -74,6 +77,9 @@ const AddBoard = styled.button`
   background-color: transparent;
   svg {
     fill: ${(props) => props.theme.grey.lighter};
+  }
+  &:hover {
+    cursor: pointer;
   }
 `;
 
@@ -110,6 +116,7 @@ interface ISnapshotProps {
 
 function Boards() {
   const [toDos, setToDos] = useRecoilState(toDoState);
+  const [newCard, setNewCard] = useRecoilState(newCardState);
   const { isLoading } = useQuery(["tasks"], getTasks, {
     onSuccess: (data) => {
       setToDos(() => data);
@@ -137,6 +144,13 @@ function Boards() {
       });
     }
     if (destination.droppableId !== source.droppableId) {
+      if (destination.droppableId === "trash") {
+        setToDos((allBoards) => {
+          const sourceBoard = [...allBoards[source.droppableId]];
+          sourceBoard.splice(source.index, 1);
+          return { ...allBoards, [source.droppableId]: sourceBoard };
+        });
+      }
       setToDos((allBoards) => {
         const sourceBoard = [...allBoards[source.droppableId]];
         const destinationBoard = [...allBoards[destination.droppableId]];
@@ -167,7 +181,7 @@ function Boards() {
                     <Border />
                     <Title>{boardId}</Title>
                     <Buttons>
-                      <AddBoard>
+                      <AddBoard onClick={() => setNewCard(boardId)}>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 448 512"
@@ -205,6 +219,28 @@ function Boards() {
                 </Board>
               ))}
             </BoardList>
+            <TrashCan />
+            <AnimatePresence>
+              {newCard ? (
+                <>
+                  <Overlay
+                    variants={overlayVariant}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    onClick={() => setNewCard(null)}
+                  ></Overlay>
+                  <NewCard
+                    variants={newCardVariant}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                  >
+                    <NewCardForm />
+                  </NewCard>
+                </>
+              ) : null}
+            </AnimatePresence>
           </Wrapper>
         </DragDropContext>
       )}

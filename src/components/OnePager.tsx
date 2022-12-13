@@ -1,12 +1,17 @@
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { categoryState, ICategoryState, infoState } from "../atom";
+import { activeState, categoryState, infoState } from "../atom";
 import "@toast-ui/editor/dist/toastui-editor-viewer.css";
 import { Viewer } from "@toast-ui/react-editor";
 
+import { useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getCategories } from "../api";
+import { useIntersectionObservation } from "./useIntersectionObserver";
+
 const Container = styled.form`
   background-color: ${(props) => props.theme.white.lighter};
-  height: 95%;
+  height: 97%;
   width: 70%;
   display: flex;
   flex-direction: column;
@@ -45,31 +50,48 @@ const Part = styled.div`
 const Content = styled.div``;
 
 const Topic = styled.h1`
+  z-index: 10;
+  background-color: ${(props) => props.theme.white.lighter};
+  top: 0;
+  padding-top: 10px;
+  position: sticky;
   font-size: x-large;
-  margin: 5px 0;
+  margin: 10px 0;
+  padding-bottom: 5px;
+  border-bottom: solid 2px ${(props) => props.theme.navy};
 `;
 
 const ViewerWrapper = styled.div`
   padding: 10px;
-  background-color: ${(props) => props.theme.white.light};
 `;
 
 export function OnePager() {
   const info = useRecoilValue(infoState);
   const data = useRecoilValue(categoryState);
-  console.log(data);
+  const rootRef = useRef<any>(null);
+  const [refState, setRefState] = useState(false); // 데이터가 로드되기전에 ref가 선언되어서 데이터가 로드된 후 재렌더링 해주기 위해 state를 선언함
+  const targetRef = useRef<any>([]);
+
+  useEffect(() => setRefState((curr) => !curr), []);
+  console.log("refState", refState);
+
+  //intersection observer
+  useIntersectionObservation(rootRef, targetRef);
 
   return (
     <>
-      <Container>
+      <Container ref={rootRef}>
         <ProjectName placeholder={info.name} />
         <Member size={info.member.length + 10} placeholder={info.member} />
         {Object.keys(data).map((part) => (
           <Part key={part}>
-            {data[part].map((topic) => (
+            {data[part].map((topic, index) => (
               <Content key={topic.id}>
                 <Topic>{topic.topic}</Topic>
-                <ViewerWrapper>
+                <ViewerWrapper
+                  className={topic.id + ""}
+                  ref={(element) => (targetRef.current[topic.id] = element)}
+                >
                   <Viewer initialValue={topic.contents} />
                 </ViewerWrapper>
               </Content>

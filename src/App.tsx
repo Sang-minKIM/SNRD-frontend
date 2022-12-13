@@ -3,6 +3,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Header from "./components/Header";
 import Boards from "./routers/Boards";
 import Home from "./routers/Home";
+import { Join } from "./routers/Join";
+import { Login } from "./routers/Login";
 import Profile from "./routers/Profile";
 import { Write } from "./routers/Write";
 
@@ -11,7 +13,9 @@ function App() {
     <BrowserRouter>
       <Header />
       <Routes>
-        <Route path="/profile/:id" element={<Profile />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/join" element={<Join />} />
+        <Route path="/profile/:userId" element={<Profile />} />
         <Route path="/boards" element={<Boards />} />
         <Route path="/write/:contentId" element={<Write />} />
         <Route path="/" element={<Home />} />

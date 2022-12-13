@@ -23,10 +23,10 @@ const Area = styled.div`
   }
   span {
     position: absolute;
-    right: 39px;
+    right: 38px;
     bottom: 14px;
-    font-size: 14px;
-    color: todoColor;
+    font-size: 12px;
+    color: ${(props) => props.theme.grey.lighter};
   }
 `;
 
@@ -44,6 +44,7 @@ const ColorBox = styled.div<IColorBoxProps>`
 const Text = styled.h2`
   padding-left: 15px;
   text-align: left;
+  font-size: 17px;
 `;
 
 interface IColorBoxProps {
