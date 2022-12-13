@@ -20,7 +20,9 @@ const ProfileBoard = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-top: 5%;
+  min-width: 20px;
 `;
 
 const ProfileImg = styled.img`
@@ -34,7 +36,6 @@ const UserInfoForm = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 350px;
 `;
 
 const UserNameBox = styled.div`
@@ -87,21 +88,93 @@ const Quotes = styled.li``;
 const ProjectBoard = styled.div`
   width: 75%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-top: 5%;
+  padding-left: 50px;
+  overflow-y: scroll;
 `;
 
-const DoingProject = styled.div``;
+const ProjectMenu = styled.div`
+  width: 100%;
+  height: 34px;
+  display: flex;
+`;
 
-const DoingSpan = styled.span;
+const ProjectMenuLabel = styled.div`
+  padding-left: 10px;
+  height: 32px;
+  font-size: 25px;
+  color: ${(props) => props.theme.grey.darker};
+  font-weight: 600;
+`;
 
-const AddProject = styled.button``;
+const AddProject = styled.button`
+  margin-left: 5px;
+  margin-bottom: 2px;
+  padding-bottom: 2px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background-color: transparent;
 
-const ProjectList = styled.div``;
+  svg {
+    fill: ${(props) => props.theme.grey.lighter};
+  }
+  &:hover {
+    cursor: pointer;
+  }
+`;
 
-const Project = styled.div``;
+const ProjectList = styled.div`
+  padding: 20px 10px;
 
-const ProjectTitle = styled(Link)``;
+  width: 100%;
+  height: calc(100% - 34px);
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
 
-const ProjectInfo = styled.div``;
+  gap: 50px;
+`;
+
+const Project = styled.div`
+  width: 45%;
+  height: 360px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 4px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  @media screen and (max-width: 1080px) {
+    width: 90%;
+  }
+`;
+
+const ProjectTitle = styled(Link)`
+  width: auto;
+  margin-left: 5%;
+  height: 30px;
+  font-size: 19px;
+  font-weight: 500;
+  padding-left: 5px;
+
+  &:hover {
+    cursor: pointer;
+    color: ${(props) => props.theme.navy};
+  }
+  color: ${(props) => props.theme.grey.darker};
+`;
+
+const ProjectInfo = styled.div`
+  margin-left: 5%;
+  width: 90%;
+  height: 300px;
+  background-color: ${(props) => props.theme.white.veryDark};
+  box-shadow: 0px 0px 4px 0 rgba(0, 0, 0, 0.2) inset;
+`;
 
 interface IUserData {
   id: number;
@@ -113,22 +186,26 @@ interface IUserData {
   userPart: string;
   quotes: string;
 }
+interface IProjectData {
+  id: number;
+  title: string;
+  teammates: string[];
+  duration: string[];
+  introduction: string;
+}
 
 function Profile() {
   const { userId } = useParams();
   const [edit, setEdit] = useState(false);
+  const { data: userData, isLoading: userLoading } = useQuery<IUserData>(
+    ["user", userId],
+    () => getUser(userId)
+  );
+  const { data: projectData, isLoading: projectLoading } = useQuery<
+    IProjectData[]
+  >(["project", userId], getProject);
 
-  const result = useQueries({
-    queries: [
-      {
-        queryKey: ["user", userId],
-        queryFn: () => getUser(userId),
-      },
-      { queryKey: ["project", userId], queryFn: getProject },
-    ],
-  });
-
-  let isLoading = result.some((data) => data.isLoading);
+  const isLoading = userLoading || projectLoading;
 
   return (
     <>
@@ -141,7 +218,7 @@ function Profile() {
             {edit ? (
               <UserInfoForm>
                 <UserNameBox>
-                  <UsernameInput value={result[0].data?.username} />
+                  <UsernameInput value={userData?.username} />
                   <EditProfileBtn
                     type="button"
                     onClick={() => setEdit((curr) => !curr)}
@@ -150,15 +227,15 @@ function Profile() {
                   </EditProfileBtn>
                 </UserNameBox>
 
-                <UserAgeInput value={result[0].data?.userAge} />
-                <UserBelongInput value={result[0].data?.userBelong} />
-                <UserPartInput value={result[0].data?.userPart} />
-                <QuotesInput value={result[0].data?.quotes} />
+                <UserAgeInput value={userData?.userAge} />
+                <UserBelongInput value={userData?.userBelong} />
+                <UserPartInput value={userData?.userPart} />
+                <QuotesInput value={userData?.quotes} />
               </UserInfoForm>
             ) : (
               <UserInfoForm>
                 <UserNameBox>
-                  <Username>{result[0].data?.username}</Username>
+                  <Username>{userData?.username}</Username>
                   <EditProfileBtn
                     type="button"
                     onClick={() => setEdit((curr) => !curr)}
@@ -167,15 +244,36 @@ function Profile() {
                   </EditProfileBtn>
                 </UserNameBox>
                 <UserInfoBox>
-                  <UserAge>{`${result[0].data?.userAge}세`}</UserAge>
-                  <UserBelong>{result[0].data?.userBelong}</UserBelong>
-                  <UserPart>{result[0].data?.userPart}</UserPart>
-                  <Quotes>{result[0].data?.quotes}</Quotes>
+                  <UserAge>{`${userData?.userAge}세`}</UserAge>
+                  <UserBelong>{userData?.userBelong}</UserBelong>
+                  <UserPart>{userData?.userPart}</UserPart>
+                  <Quotes>{userData?.quotes}</Quotes>
                 </UserInfoBox>
               </UserInfoForm>
             )}
           </ProfileBoard>
-          <ProjectBoard></ProjectBoard>
+          <ProjectBoard>
+            <ProjectMenu>
+              <ProjectMenuLabel>
+                {userData?.username}의 프로젝트
+              </ProjectMenuLabel>
+              <AddProject>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                  <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
+                </svg>
+              </AddProject>
+            </ProjectMenu>
+            <ProjectList>
+              {projectData?.map((project) => (
+                <Project key={project.id}>
+                  <ProjectTitle to={`/project/${project.id}`}>
+                    {project.title}
+                  </ProjectTitle>
+                  <ProjectInfo></ProjectInfo>
+                </Project>
+              ))}
+            </ProjectList>
+          </ProjectBoard>
         </Container>
       )}
     </>

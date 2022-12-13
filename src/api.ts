@@ -30,6 +30,12 @@ export function putTasks(newTask: IToDoState) {
   }).then((response) => response.json());
 }
 
+export function getContents(contentId: string | undefined) {
+  return fetch(`${BASE_URL}/result/${contentId}`).then((response) =>
+    response.json()
+  );
+}
+
 export interface IContents {
   id?: number;
   categoryIndex?: number;
@@ -42,11 +48,7 @@ export interface IContentsProp {
   contentId?: string;
   posting?: IContents;
 }
-export function getContents(contentId: string | undefined) {
-  return fetch(`${BASE_URL}/result/${contentId}`).then((response) =>
-    response.json()
-  );
-}
+
 export function postContents({ contentId, posting }: IContentsProp) {
   return fetch(`${BASE_URL}/result/${contentId}`, {
     method: "PUT",
@@ -65,4 +67,26 @@ export function getUser(userId: string | undefined) {
 
 export function getProject() {
   return fetch(`${BASE_URL}/project`).then((response) => response.json());
+}
+
+export interface IInfo {
+  id: number;
+  title: string;
+  teammates: string[];
+  duration: string[];
+  introduction: string;
+}
+export interface IInfoProp {
+  id?: string;
+  posting?: IInfo;
+}
+
+export function putProjectInfo({ id, posting }: IInfoProp) {
+  return fetch(`${BASE_URL}/project/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(posting),
+  }).then((response) => response.json());
 }

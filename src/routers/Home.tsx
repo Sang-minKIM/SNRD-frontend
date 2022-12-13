@@ -1,20 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 import { getCategories } from "../api";
-import {
-  categoryState,
-  ICategoryState,
-  infoState,
-  newCardState,
-} from "../atom";
+import { categoryState, ICategoryState, newCardState } from "../atom";
 
 import Categories from "../components/Categories";
-import Header from "../components/Header";
+
 import Navigation from "../components/Navigation";
 import { NewCategoryForm } from "../components/NewCardForm";
+
 import { OnePager } from "../components/OnePager";
 
 const Wrapper = styled.div`

@@ -1,9 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useParams } from "react-router-dom";
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { putCategories, putTasks } from "../api";
+import { putCategories, putProjectInfo, putTasks } from "../api";
 import { categoryState, newCardState, toDoState } from "../atom";
 
 const Form = styled.form`
@@ -137,7 +138,6 @@ export function NewCardForm() {
     });
     setNewCard(null);
   };
-  useEffect(() => mutation.mutate(), [todos]);
 
   return (
     <Form onSubmit={handleSubmit(onValid)}>
@@ -154,4 +154,35 @@ export function NewCardForm() {
       <Submit type="submit" value="Done" />
     </Form>
   );
+}
+
+export function EditProjectInfo() {
+  const { id } = useParams();
+  const [newCard, setNewCard] = useRecoilState(newCardState);
+  const posting = {
+    id,
+    title: "",
+    teammates: [],
+    duration: [],
+    introduction: "",
+  };
+
+  const mutation = useMutation(putProjectInfo, {
+    onSuccess: (data, variables, context) => {
+      console.log("success", data, variables, context);
+    },
+  });
+  const { register, handleSubmit } = useForm();
+  const onValid = () => {
+    // mutation.mutate({ id, posting });
+  };
+
+  <Form onSubmit={handleSubmit(onValid)}>
+    <Title
+      {...register("topic", { required: true })}
+      placeholder="제목을 입력하세요"
+    />
+
+    <Submit type="submit" value="Done" />
+  </Form>;
 }
