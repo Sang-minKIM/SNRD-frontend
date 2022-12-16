@@ -9,7 +9,7 @@ import { categoryState, ICategoryState, newCardState } from "../atom";
 import Categories from "../components/Categories";
 
 import Navigation from "../components/Navigation";
-import { NewCategoryForm } from "../components/NewCardForm";
+import { EditProjectInfo, NewCategoryForm } from "../components/NewCardForm";
 
 import { OnePager } from "../components/OnePager";
 
@@ -33,6 +33,7 @@ export const Overlay = styled(motion.div)`
   justify-content: center;
   align-items: center;
   bottom: 0;
+  z-index: 20;
 `;
 
 export const NewCard = styled(motion.div)`
@@ -44,6 +45,19 @@ export const NewCard = styled(motion.div)`
   border: none;
   position: absolute;
   top: 30%;
+  z-index: 21;
+`;
+
+const NewProjectCard = styled(motion.div)`
+  background-color: ${(props) => props.theme.white.lighter};
+  border-radius: 5px;
+  width: 50%;
+  height: auto;
+  min-height: 200px;
+  border: none;
+  position: absolute;
+  top: 10%;
+  z-index: 21;
 `;
 
 export const overlayVariant = {
@@ -101,7 +115,7 @@ function Home() {
           <Categories />
           <OnePager />
           <AnimatePresence>
-            {newCard ? (
+            {newCard !== null && newCard !== "project" ? (
               <>
                 <Overlay
                   variants={overlayVariant}
@@ -118,6 +132,25 @@ function Home() {
                 >
                   <NewCategoryForm />
                 </NewCard>
+              </>
+            ) : null}
+            {newCard === "project" ? (
+              <>
+                <Overlay
+                  variants={overlayVariant}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  onClick={() => setNewCard(null)}
+                ></Overlay>
+                <NewProjectCard
+                  variants={newCardVariant}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                >
+                  <EditProjectInfo />
+                </NewProjectCard>
               </>
             ) : null}
           </AnimatePresence>

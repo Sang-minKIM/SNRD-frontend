@@ -1,6 +1,8 @@
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useMatch, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
+import { getProject, getUser } from "../api";
 import logo from "../assets/logo.svg";
 
 const Nav = styled.nav`
@@ -48,35 +50,130 @@ const Logo = styled.img`
   }
 `;
 
+const ProjectList = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 170px;
+  z-index: 21;
+
+  height: 240px;
+
+  right: 70px;
+  top: 55px;
+  position: absolute;
+  background: ${(props) => props.theme.white.lighter};
+  border-radius: 0.4em;
+  border: 1px solid #cfd7dd;
+
+  &:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+    border-bottom-color: ${(props) => props.theme.white.lighter};
+    border-top: 0;
+    margin-left: -10px;
+    margin-top: -10px;
+  }
+`;
+
+const ProjectLabel = styled.div`
+  width: 100%;
+  height: 50px;
+`;
+
+const ProjectLink = styled(Link)`
+  height: 30px;
+  width: 100%;
+
+  display: flex;
+  padding-left: 15px;
+  justify-content: flex-start;
+  align-items: center;
+`;
+
+const Overlay = styled.div`
+  background-color: transparent;
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  bottom: 0;
+  z-index: 20;
+`;
+
+interface IProject {
+  id: number;
+  title: string;
+  teammates: string[];
+  duration: string[];
+  introduction: string;
+}
+
 function Header() {
   const [isLoggedin, setIsLoggedIn] = useState(false);
+  const { userId } = useParams();
   const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // const { isLoading: userLoading, data: userData } = useQuery(["user"], () =>
+  //   getUser(userId)
+  // );
+  // let isLoading = userLoading;
+  const profileMatch = useMatch("/profile/:id");
+  const loginMatch = useMatch("/login");
+  const joinMatch = useMatch("/join");
   return (
-    <Nav>
-      <Col>
-        <Logo src={logo} onClick={() => navigate("/")} />
-      </Col>
-      <Items>
-        <Item>
-          <Link to="">소개</Link>
-        </Item>
-        <Item>
-          <Link to="/">프로젝트</Link>
-        </Item>
-        <Item>
-          <Link to="profile/:id">프로필</Link>
-        </Item>
-        {isLoggedin ? (
+    <>
+      <Nav>
+        <Col>
+          <Logo src={logo} onClick={() => navigate("/")} />
+        </Col>
+        <Items>
           <Item>
-            <Link to="logout">로그아웃</Link>
+            <Link to="">소개</Link>
           </Item>
-        ) : (
-          <Item>
-            <Link to="login">로그인</Link>
-          </Item>
-        )}
-      </Items>
-    </Nav>
+          {joinMatch || profileMatch || loginMatch ? null : (
+            <>
+              <Item>
+                <span onClick={() => setIsMenuOpen(true)}>프로젝트</span>
+              </Item>
+              <Item>
+                <Link to="profile/:id">프로필</Link>
+              </Item>
+            </>
+          )}
+          {loginMatch ? null : isLoggedin ? (
+            <Item>
+              <Link to="logout">로그아웃</Link>
+            </Item>
+          ) : (
+            <Item>
+              <Link to="login">로그인</Link>
+            </Item>
+          )}
+        </Items>
+      </Nav>
+      {isMenuOpen ? (
+        <>
+          <Overlay onClick={() => setIsMenuOpen(false)}></Overlay>
+          <ProjectList>
+            {/* <ProjectLabel>{userData?.username}의 프로젝트</ProjectLabel>
+            {isLoading
+              ? null
+              : projectData.map((project: IProject) => (
+                  <ProjectLink to="null">{project.title}</ProjectLink>
+                ))} */}
+          </ProjectList>
+        </>
+      ) : null}
+    </>
   );
 }
 

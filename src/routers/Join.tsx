@@ -1,6 +1,8 @@
+import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { IUserProp, postJoin } from "../api";
 import bgimg from "../assets/loginBg.svg";
 import {
   BgImg,
@@ -33,6 +35,17 @@ interface IForm {
 
 export function Join() {
   const { register, handleSubmit, setError } = useForm<IForm>();
+  const mutation = useMutation(postJoin, {
+    onMutate: (variable) => {
+      console.log("onMutate", variable);
+
+      // variable : {loginId: 'xxx', password; 'xxx'}
+    },
+    onSuccess: (data, variables, context) => {
+      console.log("success", data, variables, context);
+    },
+  });
+  const navigate = useNavigate();
 
   const onValid = ({ username, userId, password, password1 }: IForm) => {
     if (password !== password1) {
@@ -42,6 +55,7 @@ export function Join() {
         { shouldFocus: true }
       );
     }
+    mutation.mutate({ username, userId, password });
   };
   return (
     <Container>
@@ -72,6 +86,7 @@ export function Join() {
             minLength: 3,
             maxLength: 25,
           })}
+          type="password"
           placeholder="비밀번호"
         />
         <ConfirmPasswordInput
@@ -80,9 +95,10 @@ export function Join() {
             minLength: 3,
             maxLength: 25,
           })}
+          type="password"
           placeholder="비밀번호 확인"
         />
-        <LoginBtn type="submit" value="로그인" />
+        <LoginBtn type="submit" value="회원가입" />
         <JoinNav>
           <JoinSpan>이미 계정이 있으신가요?</JoinSpan>
           <JoinBtn to="/login">로그인</JoinBtn>

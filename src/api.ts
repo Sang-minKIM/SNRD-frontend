@@ -1,6 +1,7 @@
 import { ICategoryState, IToDoState } from "./atom";
 
-const BASE_URL = "http://localhost:4000";
+// const BASE_URL = "http://localhost:4000";
+const BASE_URL = "/api";
 
 export function getCategories() {
   return fetch(`${BASE_URL}/category`).then((response) => response.json());
@@ -88,5 +89,21 @@ export function putProjectInfo({ id, posting }: IInfoProp) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(posting),
+  }).then((response) => response.json());
+}
+
+export interface IUserProp {
+  userId: string;
+  password: string;
+  username: string;
+}
+
+export function postJoin({ userId, password, username }: IUserProp) {
+  return fetch(`${BASE_URL}/accounts/register`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email: userId, password, name: username }),
   }).then((response) => response.json());
 }

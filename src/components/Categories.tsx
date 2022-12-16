@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-
+import edit from "../assets/edit.svg";
 import { useEffect, useRef } from "react";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import { useRecoilState, useSetRecoilState } from "recoil";
@@ -7,6 +7,7 @@ import styled from "styled-components";
 import { putCategories } from "../api";
 import { categoryState, newCardState } from "../atom";
 import Category from "./Category";
+import { motion } from "framer-motion";
 
 const Wrapper = styled.div`
   height: 97%;
@@ -74,6 +75,11 @@ const Info = styled.div`
   color: black;
   border: 1px solid #e0e0e0;
   margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+`;
+const EditIcon = styled(motion.img)`
+  width: 23px;
 `;
 
 const Column = styled.div`
@@ -127,6 +133,11 @@ function Categories() {
               <ColorBox />
               <Text>프로젝트 정보</Text>
             </Column>
+            <EditIcon
+              onClick={() => setNewCard("project")}
+              src={edit}
+              alt="null"
+            />
           </Info>
         </div>
         {Object.keys(categories).map((part, index) => (

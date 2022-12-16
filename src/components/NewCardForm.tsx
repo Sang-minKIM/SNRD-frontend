@@ -1,11 +1,12 @@
 import { useMutation } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { putCategories, putProjectInfo, putTasks } from "../api";
-import { categoryState, newCardState, toDoState } from "../atom";
+import { categoryState, dateState, newCardState, toDoState } from "../atom";
+import { Calender } from "./Calender";
 
 const Form = styled.form`
   height: 100%;
@@ -20,7 +21,6 @@ const Form = styled.form`
   border-radius: 5px;
 `;
 const Title = styled.input`
-  margin-top: 15px;
   border-radius: 5px;
   border: none;
   width: 100%;
@@ -30,6 +30,15 @@ const Title = styled.input`
     border: solid ${(props) => props.theme.navy};
   }
 `;
+
+const Label = styled.label`
+  width: 100%;
+  margin-top: 15px;
+  padding-left: 5px;
+  padding-bottom: 3px;
+  color: ${(props) => props.theme.navy};
+`;
+
 const Submit = styled.input`
   border: none;
   border-radius: 5px;
@@ -39,16 +48,7 @@ const Submit = styled.input`
   font-size: 15px;
   background-color: ${(props) => props.theme.navy};
   color: ${(props) => props.theme.white.darker};
-`;
-const Button = styled.input`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  border: none;
-  border-radius: 5px;
-  width: 30px;
-  height: 30px;
-  font-size: larger;
+  margin: 15px 0;
 `;
 
 const Select = styled.select`
@@ -65,6 +65,23 @@ const Select = styled.select`
 
 const Option = styled.option`
   width: 100%;
+`;
+
+const DurationBox = styled.div`
+  position: relative;
+
+  width: 100%;
+`;
+
+const Duration = styled.input`
+  border-radius: 5px;
+  border: none;
+  width: 100%;
+  padding: 10px;
+  background-color: #ffffff;
+  &:focus {
+    outline: none;
+  }
 `;
 
 interface IForm {
@@ -102,9 +119,33 @@ export function NewCategoryForm() {
 
   return (
     <Form onSubmit={handleSubmit(onValid)}>
+      <Label>제목</Label>
       <Title
         {...register("topic", { required: true })}
-        placeholder="제목을 입력하세요"
+        placeholder="새로운 작업의 제목을 입력하세요"
+      />
+      <Submit type="submit" value="Done" />
+    </Form>
+  );
+}
+export function EditCategoryForm() {
+  const [newCard, setNewCard] = useRecoilState(newCardState);
+  const [category, setCategory] = useRecoilState(categoryState);
+  const mutation = useMutation(() => putCategories(category), {
+    onSuccess: (data, variables, context) => {
+      console.log("success", data, variables, context);
+    },
+  });
+  const { register, handleSubmit } = useForm<IForm>();
+  const onValid = () => {};
+  useEffect(() => mutation.mutate(), [category]);
+
+  return (
+    <Form onSubmit={handleSubmit(onValid)}>
+      <Label>제목</Label>
+      <Title
+        {...register("topic", { required: true })}
+        placeholder="새로운 작업의 제목을 입력하세요"
       />
       <Submit type="submit" value="Done" />
     </Form>
@@ -141,10 +182,12 @@ export function NewCardForm() {
 
   return (
     <Form onSubmit={handleSubmit(onValid)}>
+      <Label>제목</Label>
       <Title
         {...register("topic", { required: true })}
-        placeholder="제목을 입력하세요"
+        placeholder="새로운 작업의 제목을 입력하세요"
       />
+      <Label>파트</Label>
       <Select {...register("part")}>
         <Option value="plan">기획</Option>
         <Option value="design">디자인</Option>
@@ -159,11 +202,28 @@ export function NewCardForm() {
 export function EditProjectInfo() {
   const { id } = useParams();
   const [newCard, setNewCard] = useRecoilState(newCardState);
+  const [date, setDate] = useState(false);
+  const duration = useRecoilValue(dateState);
+
+  // const startDate = new Intl.DateTimeFormat("ko-KR", {
+  //   dateStyle: "full",
+  // }).format(duration[0].startDate);
+  // const endDate = new Intl.DateTimeFormat("ko-KR", {
+  //   dateStyle: "full",
+  // }).format(duration[0].endDate);
+
+  const startDate = duration[0].startDate?.toLocaleDateString("ko", {
+    dateStyle: "full",
+  });
+  const endDate = duration[0].endDate?.toLocaleDateString("ko", {
+    dateStyle: "full",
+  });
+
   const posting = {
     id,
     title: "",
     teammates: [],
-    duration: [],
+    duration: duration,
     introduction: "",
   };
 
@@ -175,14 +235,36 @@ export function EditProjectInfo() {
   const { register, handleSubmit } = useForm();
   const onValid = () => {
     // mutation.mutate({ id, posting });
+    setNewCard(null);
   };
+  return (
+    <Form onSubmit={handleSubmit(onValid)}>
+      <Label>프로젝트 이름</Label>
+      <Title
+        {...register("topic", { required: true })}
+        placeholder="프로젝트 이름을 입력하세요."
+      />
+      <Label>프로젝트 기간</Label>
+      <DurationBox>
+        <Duration
+          value={`${startDate} ~ ${endDate}`}
+          type="button"
+          onClick={() => setDate(true)}
+        />
+        {date ? <Calender setCalender={setDate} /> : null}
+      </DurationBox>
+      <Label>팀원</Label>
+      <Title
+        {...register("team")}
+        placeholder="팀원 이름을 입력하세요. (박영훈, 안영훈...)"
+      />
+      <Label>슬로건</Label>
+      <Title
+        {...register("slogan")}
+        placeholder="프로젝트 슬로건이나 간단한 소개를 적어주세요."
+      />
 
-  <Form onSubmit={handleSubmit(onValid)}>
-    <Title
-      {...register("topic", { required: true })}
-      placeholder="제목을 입력하세요"
-    />
-
-    <Submit type="submit" value="Done" />
-  </Form>;
+      <Submit type="submit" value="Done" />
+    </Form>
+  );
 }

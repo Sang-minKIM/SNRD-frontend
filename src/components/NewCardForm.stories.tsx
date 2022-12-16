@@ -1,11 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 
-import { NewCardForm } from "./NewCardForm";
+import { EditProjectInfo } from "./NewCardForm";
 
 export default {
   title: "components/NewCardForm",
-  component: NewCardForm,
+  component: EditProjectInfo,
 };
 
 const Overlay = styled.div`
@@ -22,18 +22,18 @@ const Overlay = styled.div`
 const NewCard = styled.div`
   background-color: ${(props) => props.theme.white.lighter};
   border-radius: 5px;
-  width: 30%;
-  height: 30%;
+  width: 50%;
+  height: auto;
   min-height: 200px;
   border: none;
   position: absolute;
-  top: 30%;
+  top: 0;
 `;
 
 export const StyledForm = () => (
   <Overlay>
     <NewCard>
-      <NewCardForm></NewCardForm>
+      <EditProjectInfo></EditProjectInfo>
     </NewCard>
   </Overlay>
 );

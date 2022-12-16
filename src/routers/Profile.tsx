@@ -194,7 +194,7 @@ interface IProjectData {
   introduction: string;
 }
 
-function Profile() {
+export function Profile() {
   const { userId } = useParams();
   const [edit, setEdit] = useState(false);
   const { data: userData, isLoading: userLoading } = useQuery<IUserData>(
@@ -279,4 +279,3 @@ function Profile() {
     </>
   );
 }
-export default Profile;

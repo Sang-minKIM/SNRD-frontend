@@ -5,6 +5,7 @@
   "dependencies": {
     "@react-icons/all-files": "^4.1.0",
     "@storybook/addon-a11y": "^6.5.14",
+    "@storybook/addon-console": "^1.2.3",
     "@tanstack/react-query": "^4.12.0",
     "@tanstack/react-query-devtools": "^4.16.1",
     "@testing-library/jest-dom": "^5.16.5",
@@ -20,8 +21,10 @@
     "@types/react-scroll": "^1.8.5",
     "@types/styled-components": "^5.1.26",
     "framer-motion": "^7.6.1",
+    "http-proxy-middleware": "^2.0.6",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
+    "react-date-range": "^1.4.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.38.0",
     "react-icons": "^4.7.1",
@@ -83,7 +86,9 @@
     "@storybook/preset-create-react-app": "^4.1.2",
     "@storybook/react": "^6.5.14",
     "@storybook/testing-library": "^0.0.13",
+    "@types/date-fns": "^2.6.0",
     "@types/react-beautiful-dnd": "^13.1.2",
+    "@types/react-date-range": "^1.4.4",
     "babel-plugin-named-exports-order": "^0.0.2",
     "prop-types": "^15.8.1",
     "webpack": "^5.75.0"
