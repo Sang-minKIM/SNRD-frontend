@@ -1,7 +1,7 @@
 import { ICategoryState, IToDoState } from "./atom";
 
 // const BASE_URL = "http://localhost:4000";
-const BASE_URL = "/api";
+const BASE_URL = "https://port-0-backend-fyyf25lbprdhq4.gksl2.cloudtype.app";
 
 export function getCategories() {
   return fetch(`${BASE_URL}/category`).then((response) => response.json());
