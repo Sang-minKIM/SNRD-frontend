@@ -93,17 +93,18 @@ export function putProjectInfo({ id, posting }: IInfoProp) {
 }
 
 export interface IUserProp {
-  userId: string;
+  email: string;
   password: string;
-  username: string;
+  name: string;
 }
 
-export function postJoin({ userId, password, username }: IUserProp) {
+export function postJoin({ email, password, name }: IUserProp) {
   return fetch(`${BASE_URL}/accounts/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Accept: "application/json",
     },
-    body: JSON.stringify({ email: userId, password, name: username }),
+    body: JSON.stringify({ email, password, name }),
   }).then((response) => response.json());
 }

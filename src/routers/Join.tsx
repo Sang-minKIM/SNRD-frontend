@@ -55,7 +55,7 @@ export function Join() {
         { shouldFocus: true }
       );
     }
-    mutation.mutate({ username, userId, password });
+    mutation.mutate({ name: username, email: userId, password });
   };
   return (
     <Container>
