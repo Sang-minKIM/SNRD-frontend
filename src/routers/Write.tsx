@@ -1,8 +1,9 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import "@toast-ui/editor/dist/toastui-editor.css";
-
+import S3 from "react-aws-s3-typescript";
+import { v4 as uuidv4 } from "uuid";
 import { Editor } from "@toast-ui/react-editor";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
@@ -37,6 +38,8 @@ interface IContents {
   commentCounts: number;
 }
 
+window.Buffer = window.Buffer || require("buffer").Buffer;
+
 export function Write() {
   const editorRef = useRef<any>(null);
   const posting = editorRef.current?.getInstance().getMarkdown();
@@ -66,6 +69,30 @@ export function Write() {
     });
     // 입력창에 입력한 내용을 MarkDown 형태로 취득
   };
+  // s3에 image 업로드하기
+  useEffect(() => {
+    if (editorRef.current) {
+      editorRef.current.getInstance().removeHook("addImageBlobHook");
+      //addImageBlobHook 삭제, 커스텀훅 추가
+      editorRef.current
+        .getInstance()
+        .addHook(
+          "addImageBlobHook",
+          (blob: any, callback: (arg0: any, arg1: string) => any) => {
+            const s3config = {
+              bucketName: process.env.REACT_APP_BUCKET_NAME as string,
+              region: process.env.REACT_APP_REGION as string,
+              accessKeyId: process.env.REACT_APP_ACCESS_ID as string,
+              secretAccessKey: process.env.REACT_APP_ACCESS_KEY as string,
+            };
+            const ReactS3Client = new S3(s3config);
+            ReactS3Client.uploadFile(blob, uuidv4())
+              .then((data) => callback(data.location, "imageURL"))
+              .catch((err) => (window.location.href = "/error"));
+          }
+        );
+    }
+  }, []);
 
   return (
     <Container>

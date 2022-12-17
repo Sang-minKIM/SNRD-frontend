@@ -115,7 +115,7 @@ interface ILoginProp {
 }
 
 export function postLogin({ email, password }: ILoginProp) {
-  return fetch(`${BASE_URL}/accounts/login`, {
+  return fetch(`${BASE_URL}/accounts/login/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
