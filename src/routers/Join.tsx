@@ -25,6 +25,9 @@ const JoinForm = styled(LoginForm)`
 const UserNameInput = styled(IdInput)``;
 const PasswordInput = styled(IdInput)``;
 const ConfirmPasswordInput = styled(IdInput)``;
+const SubmitBtn = styled(LoginBtn)`
+  height: 50px;
+`;
 
 interface IForm {
   username: string;
@@ -98,7 +101,7 @@ export function Join() {
           type="password"
           placeholder="비밀번호 확인"
         />
-        <LoginBtn type="submit" value="회원가입" />
+        <SubmitBtn type="submit" value="회원가입" />
         <JoinNav>
           <JoinSpan>이미 계정이 있으신가요?</JoinSpan>
           <JoinBtn to="/login">로그인</JoinBtn>
