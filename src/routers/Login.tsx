@@ -1,6 +1,8 @@
+import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { postLogin } from "../api";
 import bgimg from "../assets/loginBg.svg";
 
 export const Container = styled.div`
@@ -96,20 +98,34 @@ export const BgImg = styled.img`
 `;
 
 interface IForm {
-  userId: string;
+  email: string;
   password: string;
 }
 
 export function Login() {
   const { register, handleSubmit } = useForm<IForm>();
-  const onValid = ({ userId, password }: IForm) => {};
+  const mutation = useMutation(postLogin, {
+    onMutate: (variable) => {
+      console.log("onMutate", variable);
+
+      // variable : {loginId: 'xxx', password; 'xxx'}
+    },
+    onSuccess: (data, variables, context) => {
+      console.log("success", data, variables, context);
+    },
+  });
+
+  const onValid = ({ email, password }: IForm) => {
+    mutation.mutate({ email, password });
+  };
+
   return (
     <Container>
       <LoginForm onSubmit={handleSubmit(onValid)}>
         <Logo />
         <Name>수나롭다</Name>
         <IdInput
-          {...register("userId", {
+          {...register("email", {
             required: "ID를 입력해주세요.",
             minLength: {
               value: 3,

@@ -108,3 +108,19 @@ export function postJoin({ email, password, name }: IUserProp) {
     body: JSON.stringify({ email, password, name }),
   }).then((response) => response.json());
 }
+
+interface ILoginProp {
+  email: string;
+  password: string;
+}
+
+export function postLogin({ email, password }: ILoginProp) {
+  return fetch(`${BASE_URL}/accounts/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({ email, password }),
+  }).then((response) => response.json());
+}
