@@ -8,7 +8,7 @@ import { Join } from "../routers/Join";
 import { Profile } from "../routers/Profile";
 import Boards from "../routers/Boards";
 import { Write } from "../routers/Write";
-import Home from "../routers/Home";
+import Home from "../routers/Project";
 
 export default {
   title: "components/Header",

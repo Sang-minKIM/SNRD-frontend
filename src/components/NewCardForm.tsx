@@ -20,6 +20,16 @@ const Form = styled.form`
   background-color: ${(props) => props.theme.white.veryDark};
   border-radius: 5px;
 `;
+
+const PopUpLabel = styled.span`
+  width: 100%;
+  padding: 5px 0;
+  margin: 10px;
+  color: ${(props) => props.theme.navy};
+  font-size: 25px;
+  font-weight: 500;
+  border-bottom: 1px solid ${(props) => props.theme.navy};
+`;
 const Title = styled.input`
   border-radius: 5px;
   border: none;
@@ -163,20 +173,19 @@ export function NewCardForm() {
   });
   const { register, handleSubmit } = useForm<IForm>();
   const onValid = ({ topic, part }: IForm) => {
-    const newTopic = {
-      id: Date.now(),
-      categoryIndex: category[part].length,
-      part: part!,
-      topic: topic,
-      contents: "",
-      commentCounts: 0,
-    };
-    setTodos((allTodos) => {
-      return {
-        ...allTodos,
-        [newCard!]: [...allTodos[newCard!], newTopic],
-      };
-    });
+    // const newTopic = {
+    //   id: Date.now(),
+    //   categoryIndex: category[part].length,
+    //   category: part!,
+    //   topic: topic,
+    //   commentCounts: 0,
+    // };
+    // setTodos((allTodos) => {
+    //   return {
+    //     ...allTodos,
+    //     [newCard!]: [...allTodos[newCard!], newTopic],
+    //   };
+    // });
     setNewCard(null);
   };
 
@@ -223,7 +232,7 @@ export function EditProjectInfo() {
     id,
     title: "",
     teammates: [],
-    duration: duration,
+    duration: `${startDate} ~ ${endDate}`,
     introduction: "",
   };
 
@@ -239,12 +248,13 @@ export function EditProjectInfo() {
   };
   return (
     <Form onSubmit={handleSubmit(onValid)}>
-      <Label>프로젝트 이름</Label>
+      <PopUpLabel>프로젝트 정보</PopUpLabel>
+      <Label>프로젝트명</Label>
       <Title
         {...register("topic", { required: true })}
         placeholder="프로젝트 이름을 입력하세요."
       />
-      <Label>프로젝트 기간</Label>
+      <Label>기간설정</Label>
       <DurationBox>
         <Duration
           value={`${startDate} ~ ${endDate}`}
@@ -253,18 +263,18 @@ export function EditProjectInfo() {
         />
         {date ? <Calender setCalender={setDate} /> : null}
       </DurationBox>
-      <Label>팀원</Label>
-      <Title
-        {...register("team")}
-        placeholder="팀원 이름을 입력하세요. (박영훈, 안영훈...)"
-      />
       <Label>슬로건</Label>
       <Title
         {...register("slogan")}
         placeholder="프로젝트 슬로건이나 간단한 소개를 적어주세요."
       />
+      <Label>팀원</Label>
+      <Title
+        {...register("team")}
+        placeholder="팀원의 email을 입력하세요. (진형@likelion.org, 영훈@likelion.org, ...)"
+      />
 
-      <Submit type="submit" value="Done" />
+      <Submit type="submit" value="확인" />
     </Form>
   );
 }

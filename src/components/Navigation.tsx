@@ -1,14 +1,14 @@
 import { motion } from "framer-motion";
-import { Link, useMatch } from "react-router-dom";
+import { Link, useMatch, useParams } from "react-router-dom";
 import styled from "styled-components";
 
 const Nav = styled.nav`
   min-width: 700px;
   background-color: #ffffff;
   width: 100vw;
-  height: 50px;
+  height: 40px;
   position: fixed;
-  top: 60px;
+  top: 50px;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
 `;
 
@@ -40,17 +40,22 @@ const Bar = styled(motion.span)`
 `;
 
 export default function Navigation() {
-  const mainMatch = useMatch("/");
-  const boardMatch = useMatch("boards");
-  const messageMatch = useMatch("message");
+  const { projectId } = useParams();
+  const mainMatch = useMatch(`/main/${projectId}`);
+  const boardMatch = useMatch(`/boards/${projectId}`);
+
   return (
     <Nav>
       <Items>
         <Item>
-          <Link to="/">메인{mainMatch && <Bar layoutId="bar" />}</Link>
+          <Link to={`/main/${projectId}`}>
+            메인{mainMatch && <Bar layoutId="bar" />}
+          </Link>
         </Item>
         <Item>
-          <Link to="/boards">보드{boardMatch && <Bar layoutId="bar" />}</Link>
+          <Link to={`/boards/${projectId}`}>
+            보드{boardMatch && <Bar layoutId="bar" />}
+          </Link>
         </Item>
         {/* <Item>
           <Link to="/message">

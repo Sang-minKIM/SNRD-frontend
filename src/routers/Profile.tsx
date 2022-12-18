@@ -1,6 +1,6 @@
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { getProject, getUser } from "../api";
@@ -8,7 +8,7 @@ import editImg from "../assets/edit.svg";
 
 const Container = styled.div`
   width: 100%;
-  height: calc(100vh - 60px);
+  height: calc(100vh - 50px);
   display: flex;
   margin-top: 60px;
   position: fixed;
@@ -176,36 +176,38 @@ const ProjectInfo = styled.div`
   box-shadow: 0px 0px 4px 0 rgba(0, 0, 0, 0.2) inset;
 `;
 
-interface IUserData {
-  id: number;
-  username: string;
-  userId: string;
-  password: string;
-  userAge: string;
-  userBelong: string;
-  userPart: string;
-  quotes: string;
-}
-interface IProjectData {
+interface IList {
   id: number;
   title: string;
   teammates: string[];
-  duration: string[];
+  teammates_name: string[];
+  duration: string;
   introduction: string;
+}
+interface IData {
+  project_list: IList[];
+  user: {
+    name: string;
+    information: string;
+  };
 }
 
 export function Profile() {
+  // const [emailParams] = useSearchParams();
+
+  // const email = emailParams.get("email");
   const { userId } = useParams();
   const [edit, setEdit] = useState(false);
-  const { data: userData, isLoading: userLoading } = useQuery<IUserData>(
-    ["user", userId],
-    () => getUser(userId)
+  const { data, isLoading } = useQuery<IData>(
+    ["project", userId],
+    () => getProject(33),
+    {
+      onSuccess(data) {
+        console.dir(data);
+      },
+    }
   );
-  const { data: projectData, isLoading: projectLoading } = useQuery<
-    IProjectData[]
-  >(["project", userId], getProject);
-
-  const isLoading = userLoading || projectLoading;
+  const userInfo = data?.user.information.split(", ");
 
   return (
     <>
@@ -215,48 +217,28 @@ export function Profile() {
         <Container>
           <ProfileBoard>
             <ProfileImg />
-            {edit ? (
-              <UserInfoForm>
-                <UserNameBox>
-                  <UsernameInput value={userData?.username} />
-                  <EditProfileBtn
-                    type="button"
-                    onClick={() => setEdit((curr) => !curr)}
-                  >
-                    <EditBtnImg src={editImg} />
-                  </EditProfileBtn>
-                </UserNameBox>
 
-                <UserAgeInput value={userData?.userAge} />
-                <UserBelongInput value={userData?.userBelong} />
-                <UserPartInput value={userData?.userPart} />
-                <QuotesInput value={userData?.quotes} />
-              </UserInfoForm>
-            ) : (
-              <UserInfoForm>
-                <UserNameBox>
-                  <Username>{userData?.username}</Username>
-                  <EditProfileBtn
-                    type="button"
-                    onClick={() => setEdit((curr) => !curr)}
-                  >
-                    <EditBtnImg src={editImg} />
-                  </EditProfileBtn>
-                </UserNameBox>
-                <UserInfoBox>
-                  <UserAge>{`${userData?.userAge}세`}</UserAge>
-                  <UserBelong>{userData?.userBelong}</UserBelong>
-                  <UserPart>{userData?.userPart}</UserPart>
-                  <Quotes>{userData?.quotes}</Quotes>
-                </UserInfoBox>
-              </UserInfoForm>
-            )}
+            <UserInfoForm>
+              <UserNameBox>
+                <Username>{data?.user.name}</Username>
+                <EditProfileBtn
+                  type="button"
+                  onClick={() => setEdit((curr) => !curr)}
+                >
+                  <EditBtnImg src={editImg} />
+                </EditProfileBtn>
+              </UserNameBox>
+              <UserInfoBox>
+                <UserAge>{userInfo && userInfo[0]}</UserAge>
+                <UserBelong>{userInfo && userInfo[1]}</UserBelong>
+                <UserPart>{userInfo && userInfo[2]}</UserPart>
+                <Quotes>{userInfo && userInfo[3]}</Quotes>
+              </UserInfoBox>
+            </UserInfoForm>
           </ProfileBoard>
           <ProjectBoard>
             <ProjectMenu>
-              <ProjectMenuLabel>
-                {userData?.username}의 프로젝트
-              </ProjectMenuLabel>
+              <ProjectMenuLabel>{data?.user.name}의 프로젝트</ProjectMenuLabel>
               <AddProject>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                   <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
@@ -264,9 +246,9 @@ export function Profile() {
               </AddProject>
             </ProjectMenu>
             <ProjectList>
-              {projectData?.map((project) => (
+              {data?.project_list.map((project) => (
                 <Project key={project.id}>
-                  <ProjectTitle to={`/project/${project.id}`}>
+                  <ProjectTitle to={`/main/${project.id}`}>
                     {project.title}
                   </ProjectTitle>
                   <ProjectInfo></ProjectInfo>

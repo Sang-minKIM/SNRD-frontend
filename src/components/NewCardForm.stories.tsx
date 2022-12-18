@@ -10,7 +10,7 @@ export default {
 
 const Overlay = styled.div`
   width: 100vw;
-  height: calc(100vh - 110px);
+  height: calc(100vh - 90px);
   position: absolute;
   display: flex;
   justify-content: center;
@@ -22,9 +22,9 @@ const Overlay = styled.div`
 const NewCard = styled.div`
   background-color: ${(props) => props.theme.white.lighter};
   border-radius: 5px;
-  width: 50%;
-  height: auto;
-  min-height: 200px;
+  width: 40%;
+  height: 80%;
+
   border: none;
   position: absolute;
   top: 0;

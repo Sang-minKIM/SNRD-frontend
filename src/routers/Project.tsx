@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
+import { useParams } from "react-router-dom";
 
 import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
@@ -17,7 +18,7 @@ const Wrapper = styled.div`
   min-width: 900px;
   position: fixed;
   width: 100vw;
-  height: calc(100vh - 95px);
+  height: calc(100vh - 90px);
   top: 110px;
   display: flex;
   justify-content: space-evenly;
@@ -75,10 +76,10 @@ export const newCardVariant = {
 function Home() {
   const setCategories = useSetRecoilState(categoryState);
   const [newCard, setNewCard] = useRecoilState(newCardState);
-
+  const { projectId } = useParams();
   const { isLoading, data } = useQuery<ICategoryState>(
     ["allCategories"],
-    getCategories,
+    () => getCategories(projectId),
     {
       onSuccess: (data) => {
         setCategories(data);

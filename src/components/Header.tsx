@@ -11,7 +11,7 @@ const Nav = styled.nav`
   top: 0;
   display: flex;
   width: 100vw;
-  height: 60px;
+  height: 50px;
   justify-content: space-between;
   align-items: center;
   background-color: ${(props) => props.theme.navy};
@@ -25,7 +25,7 @@ const Items = styled.ul`
   display: flex;
   align-items: flex-start;
   padding-right: 10px;
-  padding-top: 10px;
+  padding-top: 5px;
 `;
 
 const Item = styled.li`

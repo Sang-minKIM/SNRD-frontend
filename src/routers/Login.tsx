@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { postLogin } from "../api";
 import bgimg from "../assets/loginBg.svg";
@@ -104,6 +104,7 @@ interface IForm {
 
 export function Login() {
   const { register, handleSubmit } = useForm<IForm>();
+  const navigate = useNavigate();
   const mutation = useMutation(postLogin, {
     onMutate: (variable) => {
       console.log("onMutate", variable);
@@ -112,6 +113,7 @@ export function Login() {
     },
     onSuccess: (data, variables, context) => {
       console.log("success", data, variables, context);
+      navigate(`/profile/33`);
     },
   });
 

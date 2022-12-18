@@ -1,12 +1,12 @@
 import styled from "styled-components";
+import notFound from "../assets/404.svg";
 
-const H1 = styled.h1`
-  margin-top: 150px;
-  height: 50px;
-  width: 100%;
-  color: ${(props) => props.theme.navy};
+const Image = styled.img`
+  position: fixed;
+  width: 100vw;
+  z-index: -1;
 `;
 
 export function NotFound() {
-  return <H1>죄송합니다. 페이지를 찾을 수 없습니다.</H1>;
+  return <Image src={notFound} />;
 }

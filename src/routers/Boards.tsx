@@ -10,7 +10,7 @@ import Card from "../components/Card";
 import Navigation from "../components/Navigation";
 import { NewCardForm } from "../components/NewCardForm";
 import { TrashCan } from "../components/TrashCan";
-import { NewCard, newCardVariant, Overlay, overlayVariant } from "./Home";
+import { NewCard, newCardVariant, Overlay, overlayVariant } from "./Project";
 
 const Wrapper = styled.div`
   position: fixed;
