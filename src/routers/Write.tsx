@@ -43,7 +43,6 @@ export function Write() {
   const editorRef = useRef<any>(null);
   const posting = editorRef.current?.getInstance().getMarkdown();
   const { contentId } = useParams();
-  console.log(contentId);
 
   // const { isLoading: contentLoading, data: contentData } = useQuery<IContents>(
   //   ["content", contentId],
@@ -51,6 +50,8 @@ export function Write() {
   // );
   const location = useLocation();
   const contentData = location.state;
+  console.log("location", location);
+  console.log("state", contentData);
 
   const postMutation = useMutation(postContents, {
     onMutate: (variable) => {
