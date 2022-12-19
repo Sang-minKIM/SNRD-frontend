@@ -20,6 +20,25 @@ const Form = styled.form`
   background-color: ${(props) => props.theme.white.veryDark};
   border-radius: 5px;
 `;
+const Horizontal = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+`;
+const Column = styled.div`
+  width: 48%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+const ProfileImg = styled.svg`
+  margin: 5px 0;
+  fill: ${(props) => props.theme.navy};
+  width: 30%;
+`;
+const SelectImgBtn = styled.input`
+  height: 25px;
+`;
 
 const PopUpLabel = styled.span`
   width: 100%;
@@ -129,6 +148,7 @@ export function NewCategoryForm() {
 
   return (
     <Form onSubmit={handleSubmit(onValid)}>
+      <PopUpLabel>작업 생성</PopUpLabel>
       <Label>제목</Label>
       <Title
         {...register("topic", { required: true })}
@@ -138,6 +158,7 @@ export function NewCategoryForm() {
     </Form>
   );
 }
+
 export function EditCategoryForm() {
   const [newCard, setNewCard] = useRecoilState(newCardState);
   const [category, setCategory] = useRecoilState(categoryState);
@@ -155,7 +176,7 @@ export function EditCategoryForm() {
       <Label>제목</Label>
       <Title
         {...register("topic", { required: true })}
-        placeholder="새로운 작업의 제목을 입력하세요"
+        placeholder="제목을 입력하세요"
       />
       <Submit type="submit" value="Done" />
     </Form>
@@ -191,6 +212,7 @@ export function NewCardForm() {
 
   return (
     <Form onSubmit={handleSubmit(onValid)}>
+      <PopUpLabel>작업 생성</PopUpLabel>
       <Label>제목</Label>
       <Title
         {...register("topic", { required: true })}
@@ -273,6 +295,46 @@ export function EditProjectInfo() {
         {...register("team")}
         placeholder="팀원의 email을 입력하세요. (진형@likelion.org, 영훈@likelion.org, ...)"
       />
+
+      <Submit type="submit" value="확인" />
+    </Form>
+  );
+}
+
+export function EditProfile() {
+  const [newCard, setNewCard] = useRecoilState(newCardState);
+  const { register, handleSubmit } = useForm();
+  const onValid = () => {
+    setNewCard(null);
+  };
+
+  return (
+    <Form onSubmit={handleSubmit(onValid)}>
+      <PopUpLabel>사용자 정보</PopUpLabel>
+      <ProfileImg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+        <path d="M399 384.2C376.9 345.8 335.4 320 288 320H224c-47.4 0-88.9 25.8-111 64.2c35.2 39.2 86.2 63.8 143 63.8s107.8-24.7 143-63.8zM512 256c0 141.4-114.6 256-256 256S0 397.4 0 256S114.6 0 256 0S512 114.6 512 256zM256 272c39.8 0 72-32.2 72-72s-32.2-72-72-72s-72 32.2-72 72s32.2 72 72 72z" />
+      </ProfileImg>
+      <SelectImgBtn type="file" />
+      <Label>이름</Label>
+      <Title
+        {...register("name", { required: true })}
+        placeholder="이름을 입력하세요."
+      />
+      <Horizontal>
+        <Column>
+          <Label>나이</Label>
+          <Title {...register("age")} placeholder="00세" />
+        </Column>
+        <Column>
+          <Label>파트</Label>
+          <Title {...register("part")} placeholder="Frontend" />
+        </Column>
+      </Horizontal>
+
+      <Label>학교/직장</Label>
+      <Title {...register("univ")} placeholder="OO대학교" />
+      <Label>나를 표현하는 한줄</Label>
+      <Title {...register("quote")} placeholder="하늘이 내려준 천재" />
 
       <Submit type="submit" value="확인" />
     </Form>

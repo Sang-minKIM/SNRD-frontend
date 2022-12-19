@@ -8,7 +8,8 @@ import { Join } from "../routers/Join";
 import { Profile } from "../routers/Profile";
 import Boards from "../routers/Boards";
 import { Write } from "../routers/Write";
-import Home from "../routers/Project";
+import { Project } from "../routers/Project";
+import { Intro } from "../routers/Intro";
 
 export default {
   title: "components/Header",
@@ -22,9 +23,10 @@ export const StyledHeader = () => (
       <Route path="/login" element={<Login />} />
       <Route path="/join" element={<Join />} />
       <Route path="/profile/:userId" element={<Profile />} />
-      <Route path="/boards" element={<Boards />} />
+      <Route path="/boards/:projectId" element={<Boards />} />
       <Route path="/write/:contentId" element={<Write />} />
-      <Route path="/" element={<Home />} />
+      <Route path="/main/:projectId" element={<Project />} />
+      <Route path="/" element={<Intro />} />
     </Routes>
   </BrowserRouter>
 );

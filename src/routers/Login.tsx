@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { postLogin } from "../api";
 import bgimg from "../assets/loginBg.svg";
+import squareLogo from "../assets/squareLogo.svg";
 
 export const Container = styled.div`
   width: 100vw;
@@ -27,11 +28,9 @@ export const LoginForm = styled.form`
   min-height: 380px;
 `;
 
-export const Logo = styled.div`
-  width: 22%;
-  padding-bottom: 22%;
-  border-radius: 50%;
-  background-color: #d9d9d9;
+export const Logo = styled.img`
+  width: 40%;
+  margin-bottom: 20px;
 `;
 
 export const Name = styled.span`
@@ -124,8 +123,8 @@ export function Login() {
   return (
     <Container>
       <LoginForm onSubmit={handleSubmit(onValid)}>
-        <Logo />
-        <Name>수나롭다</Name>
+        <Logo src={squareLogo} />
+
         <IdInput
           {...register("email", {
             required: "ID를 입력해주세요.",

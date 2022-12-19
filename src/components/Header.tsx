@@ -1,8 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Link, useMatch, useNavigate, useParams } from "react-router-dom";
+import {
+  Link,
+  useMatch,
+  useMatches,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import styled from "styled-components";
-import { getProject, getUser } from "../api";
+
 import logo from "../assets/logo.svg";
 
 const Nav = styled.nav`
@@ -41,8 +47,7 @@ const Col = styled.div`
 `;
 
 const Logo = styled.img`
-  width: 138px;
-  height: 35px;
+  height: 50px;
   margin-bottom: 1px;
   margin-right: 10px;
   &:hover {
@@ -129,27 +134,27 @@ function Header() {
   const profileMatch = useMatch("/profile/:id");
   const loginMatch = useMatch("/login");
   const joinMatch = useMatch("/join");
+  const introMatch = useMatch("/");
+  const projectMatch = useMatch("/main/:projectId");
+  const boardMatch = useMatch("/board/:projectId");
   return (
     <>
       <Nav>
         <Col>
-          <Logo src={logo} onClick={() => navigate("/")} />
+          <Logo src={logo} />
         </Col>
         <Items>
           <Item>
             <Link to="">소개</Link>
           </Item>
-          {joinMatch || profileMatch || loginMatch ? null : (
+          {projectMatch || boardMatch ? (
             <>
-              <Item>
-                <span onClick={() => setIsMenuOpen(true)}>프로젝트</span>
-              </Item>
               <Item>
                 <Link to="profile/:id">프로필</Link>
               </Item>
             </>
-          )}
-          {loginMatch ? null : isLoggedin ? (
+          ) : null}
+          {loginMatch || introMatch || joinMatch ? null : isLoggedin ? (
             <Item>
               <Link to="logout">로그아웃</Link>
             </Item>

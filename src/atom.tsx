@@ -24,10 +24,10 @@ export interface ICategoryState {
 export const categoryState = atom<ICategoryState>({
   key: "category",
   default: {
-    plan: [],
-    design: [],
-    frontend: [],
-    backend: [],
+    PM: [],
+    Design: [],
+    Frontend: [],
+    Backend: [],
   },
 });
 

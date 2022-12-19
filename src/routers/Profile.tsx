@@ -1,10 +1,14 @@
-import { useQueries, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 import { useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
-import { getProject, getUser } from "../api";
+import { getProfile } from "../api";
 import editImg from "../assets/edit.svg";
+import { newCardState } from "../atom";
+import { EditProjectInfo } from "../components/CardForm";
 
 const Container = styled.div`
   width: 100%;
@@ -176,6 +180,28 @@ const ProjectInfo = styled.div`
   box-shadow: 0px 0px 4px 0 rgba(0, 0, 0, 0.2) inset;
 `;
 
+const Overlay = styled(motion.div)`
+  width: 100vw;
+  height: calc(100vh - 90px);
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  bottom: 0;
+  background-color: "rgba(0, 0, 0, 0.5)";
+`;
+
+const NewCard = styled(motion.div)`
+  background-color: ${(props) => props.theme.white.lighter};
+  border-radius: 5px;
+  width: 40%;
+  height: 80%;
+
+  border: none;
+  position: absolute;
+  top: 0;
+`;
+
 interface IList {
   id: number;
   title: string;
@@ -192,22 +218,36 @@ interface IData {
   };
 }
 
+const overlayVariant = {
+  hidden: { backgroundColor: "rgba(0, 0, 0, 0)" },
+  visible: { backgroundColor: "rgba(0, 0, 0, 0.5)" },
+  exit: { backgroundColor: "rgba(0, 0, 0, 0)" },
+};
+
+const newCardVariant = {
+  hidden: { scale: 0 },
+  visible: { scale: 1 },
+  exit: { scale: 0 },
+};
+
 export function Profile() {
   // const [emailParams] = useSearchParams();
-
   // const email = emailParams.get("email");
+  const [newCard, setNewCard] = useRecoilState(newCardState);
   const { userId } = useParams();
   const [edit, setEdit] = useState(false);
   const { data, isLoading } = useQuery<IData>(
     ["project", userId],
-    () => getProject(33),
+    () => getProfile(33),
     {
       onSuccess(data) {
         console.dir(data);
       },
     }
   );
-  const userInfo = data?.user.information.split(", ");
+  const userInfo = data?.user.information
+    .split(",")
+    .map((value) => value.trim());
 
   return (
     <>
@@ -217,7 +257,6 @@ export function Profile() {
         <Container>
           <ProfileBoard>
             <ProfileImg />
-
             <UserInfoForm>
               <UserNameBox>
                 <Username>{data?.user.name}</Username>
@@ -239,7 +278,7 @@ export function Profile() {
           <ProjectBoard>
             <ProjectMenu>
               <ProjectMenuLabel>{data?.user.name}의 프로젝트</ProjectMenuLabel>
-              <AddProject>
+              <AddProject onClick={() => setNewCard("addProject")}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                   <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
                 </svg>
@@ -256,6 +295,24 @@ export function Profile() {
               ))}
             </ProjectList>
           </ProjectBoard>
+          {newCard === "addProject" ? (
+            <Overlay
+              variants={overlayVariant}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              onClick={() => setNewCard(null)}
+            >
+              <NewCard
+                variants={newCardVariant}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+              >
+                <EditProjectInfo />
+              </NewCard>
+            </Overlay>
+          ) : null}
         </Container>
       )}
     </>

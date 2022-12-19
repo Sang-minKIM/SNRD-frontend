@@ -115,16 +115,16 @@ function Category({ category, index }: ICategoryProps) {
   const active = useRecoilValue(activeState);
   useEffect(() => {
     switch (category.part) {
-      case "plan":
+      case "PM":
         setCategoryColor("#56d1b5");
         break;
-      case "design":
+      case "Design":
         setCategoryColor("#f8c958");
         break;
-      case "frontend":
+      case "Frontend":
         setCategoryColor("#3498db");
         break;
-      case "backend":
+      case "Backend":
         setCategoryColor("#746af1");
         break;
       default:

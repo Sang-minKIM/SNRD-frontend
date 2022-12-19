@@ -10,7 +10,7 @@ import { categoryState, ICategoryState, newCardState } from "../atom";
 import Categories from "../components/Categories";
 
 import Navigation from "../components/Navigation";
-import { EditProjectInfo, NewCategoryForm } from "../components/NewCardForm";
+import { EditProjectInfo, NewCategoryForm } from "../components/CardForm";
 
 import { OnePager } from "../components/OnePager";
 
@@ -73,7 +73,7 @@ export const newCardVariant = {
   exit: { scale: 0 },
 };
 
-function Home() {
+export function Project() {
   const setCategories = useSetRecoilState(categoryState);
   const [newCard, setNewCard] = useRecoilState(newCardState);
   const { projectId } = useParams();
@@ -116,7 +116,10 @@ function Home() {
           <Categories />
           <OnePager />
           <AnimatePresence>
-            {newCard !== null && newCard !== "project" ? (
+            {newCard === "PM" ||
+            newCard === "Design" ||
+            newCard === "Frontend" ||
+            newCard === "Backend" ? (
               <>
                 <Overlay
                   variants={overlayVariant}
@@ -160,4 +163,3 @@ function Home() {
     </>
   );
 }
-export default Home;

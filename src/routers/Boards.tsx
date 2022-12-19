@@ -8,7 +8,7 @@ import { getTasks, putTasks } from "../api";
 import { newCardState, toDoState } from "../atom";
 import Card from "../components/Card";
 import Navigation from "../components/Navigation";
-import { NewCardForm } from "../components/NewCardForm";
+import { NewCardForm } from "../components/CardForm";
 import { TrashCan } from "../components/TrashCan";
 import { NewCard, newCardVariant, Overlay, overlayVariant } from "./Project";
 

@@ -70,7 +70,7 @@ export function getUser(userId: string | undefined) {
   );
 }
 
-export function getProject(userId: number | undefined) {
+export function getProfile(userId: number | undefined) {
   return fetch(`${BASE_URL}/profilepage/${userId}/`).then((response) =>
     response.json()
   );

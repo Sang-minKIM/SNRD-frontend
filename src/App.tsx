@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Header from "./components/Header";
 import Boards from "./routers/Boards";
-import Home from "./routers/Project";
+import { Project } from "./routers/Project";
 import { Join } from "./routers/Join";
 import { Login } from "./routers/Login";
 import { NotFound } from "./routers/NotFound";
@@ -20,7 +20,7 @@ function App() {
         <Route path="/profile/:userId" element={<Profile />} />
         <Route path="/write/:contentId" element={<Write />} />
         <Route path="/boards/:projectId" element={<Boards />} />
-        <Route path="/main/:projectId" element={<Home />} />
+        <Route path="/main/:projectId" element={<Project />} />
         <Route path="/" element={<Intro />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

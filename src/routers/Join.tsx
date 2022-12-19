@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { IUserProp, postJoin } from "../api";
 import bgimg from "../assets/loginBg.svg";
+import squareLogo from "../assets/squareLogo.svg";
 import {
   BgImg,
   Container,
@@ -14,7 +15,6 @@ import {
   LoginBtn,
   LoginForm,
   Logo,
-  Name,
 } from "./Login";
 
 const JoinForm = styled(LoginForm)`
@@ -63,8 +63,8 @@ export function Join() {
   return (
     <Container>
       <JoinForm onSubmit={handleSubmit(onValid)}>
-        <Logo />
-        <Name>수나롭다</Name>
+        <Logo src={squareLogo} />
+
         <UserNameInput
           {...register("username", {
             required: "이름을 입력해주세요.",
