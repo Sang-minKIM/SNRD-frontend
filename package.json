@@ -98,6 +98,5 @@
     "gh-pages": "^4.0.0",
     "prop-types": "^15.8.1",
     "webpack": "^5.75.0"
-  },
-  "proxy": "https://port-0-backend-fyyf25lbprdhq4.gksl2.cloudtype.app/"
+  }
 }
