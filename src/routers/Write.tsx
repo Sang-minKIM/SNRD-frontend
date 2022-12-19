@@ -50,6 +50,8 @@ export function Write() {
   // );
   const location = useLocation();
   const { contentData } = location.state;
+  console.log("location", location);
+  console.log("contentData", contentData);
 
   const postMutation = useMutation(postContents, {
     onMutate: (variable) => {
@@ -103,7 +105,7 @@ export function Write() {
         placeholder="내용을 입력해주세요."
         previewStyle="vertical"
         initialEditType="wysiwyg"
-        initialValue={contentData && contentData.contents}
+        initialValue={contentData && contentData}
         toolbarItems={[
           // 툴바 옵션 설정
           ["heading", "bold", "italic", "strike"],
