@@ -164,7 +164,7 @@ function Categories() {
                   <Category
                     category={category}
                     index={index}
-                    key={category.topic}
+                    key={category.id}
                   />
                 ))}
                 {provided.placeholder}
