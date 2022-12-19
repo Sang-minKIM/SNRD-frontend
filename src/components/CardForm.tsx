@@ -192,10 +192,11 @@ export function EditCategoryForm() {
 }
 
 export function NewCardForm() {
+  const { projectId } = useParams();
   const [newCard, setNewCard] = useRecoilState(newCardState);
   const [todos, setTodos] = useRecoilState(toDoState);
   const category = useRecoilValue(categoryState);
-  const mutation = useMutation(() => putTasks(todos), {
+  const mutation = useMutation(() => putTasks({ projectId, newTask: todos }), {
     onSuccess: (data, variables, context) => {
       console.log("success", data, variables, context);
     },
