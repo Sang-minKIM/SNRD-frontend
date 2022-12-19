@@ -38,6 +38,7 @@ interface IForm {
 
 export function Join() {
   const { register, handleSubmit, setError } = useForm<IForm>();
+  const navigate = useNavigate();
   const mutation = useMutation(postJoin, {
     onMutate: (variable) => {
       console.log("onMutate", variable);
@@ -46,9 +47,9 @@ export function Join() {
     },
     onSuccess: (data, variables, context) => {
       console.log("success", data, variables, context);
+      navigate("/login");
     },
   });
-  const navigate = useNavigate();
 
   const onValid = ({ username, userId, password, password1 }: IForm) => {
     if (password !== password1) {

@@ -15,7 +15,7 @@ import loginBtn from "../assets/loginBtn.svg";
 import logoutBtn from "../assets/logoutBtn.svg";
 import profileBtn from "../assets/profileBtn.svg";
 import { useRecoilValue } from "recoil";
-import { userIdState } from "../atom";
+import { loginState, userIdState } from "../atom";
 
 const Nav = styled.nav`
   min-width: 870px;
@@ -123,7 +123,7 @@ const Overlay = styled.div`
 `;
 
 function Header() {
-  const [isLoggedin, setIsLoggedIn] = useState(false);
+  const isLoggedin = useRecoilValue(loginState);
   const userId = useRecoilValue(userIdState);
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -177,19 +177,19 @@ function Header() {
           )}
         </Items>
       </Nav>
-      {isMenuOpen ? (
+      {/* {isMenuOpen ? (
         <>
           <Overlay onClick={() => setIsMenuOpen(false)}></Overlay>
           <ProjectList>
-            {/* <ProjectLabel>{userData?.username}의 프로젝트</ProjectLabel>
+            <ProjectLabel>{userData?.username}의 프로젝트</ProjectLabel>
             {isLoading
               ? null
               : projectData.map((project: IProject) => (
                   <ProjectLink to="null">{project.title}</ProjectLink>
-                ))} */}
+                ))}
           </ProjectList>
         </>
-      ) : null}
+      ) : null} */}
     </>
   );
 }

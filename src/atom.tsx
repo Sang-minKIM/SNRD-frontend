@@ -16,10 +16,10 @@ export const infoState = atom({
 export interface ICategory {
   id: number;
   categoryIndex: number;
-  part: string;
+  category: string;
   topic: string;
   contents: string;
-  commentCounts: number;
+  comment_list: any;
 }
 
 export interface ICategoryState {

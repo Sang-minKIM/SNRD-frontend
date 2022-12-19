@@ -135,10 +135,10 @@ export function NewCategoryForm() {
     const newTopic = {
       id: Date.now(),
       categoryIndex: category[newCard!].length,
-      part: newCard!,
-      topic: topic,
+      category: newCard!,
+      topic,
       contents: "",
-      commentCounts: 0,
+      comment_list: [],
     };
     setCategory((allCategoies) => {
       return {

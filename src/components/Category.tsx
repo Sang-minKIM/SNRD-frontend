@@ -114,7 +114,7 @@ function Category({ category, index }: ICategoryProps) {
   const navigate = useNavigate();
   const active = useRecoilValue(activeState);
   useEffect(() => {
-    switch (category.part) {
+    switch (category.category) {
       case "PM":
         setCategoryColor("#56d1b5");
         break;
