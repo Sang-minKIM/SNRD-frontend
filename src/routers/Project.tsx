@@ -74,7 +74,7 @@ export const newCardVariant = {
 };
 
 export function Project() {
-  const setCategories = useSetRecoilState(categoryState);
+  const [categories, setCategories] = useRecoilState(categoryState);
   const [newCard, setNewCard] = useRecoilState(newCardState);
   const { projectId } = useParams();
   const { isLoading, data } = useQuery<ICategoryState>(
@@ -83,6 +83,8 @@ export function Project() {
     {
       onSuccess: (data) => {
         setCategories(data);
+        console.log("data", data);
+        console.log("category", categories);
       },
     }
   );
