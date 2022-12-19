@@ -1,5 +1,10 @@
 import { atom } from "recoil";
 import { addDays } from "date-fns";
+import { recoilPersist } from "recoil-persist";
+
+const { persistAtom } = recoilPersist({
+  storage: localStorage,
+});
 
 export const infoState = atom({
   key: "information",
@@ -83,4 +88,15 @@ export const dateState = atom<IDate[]>({
       key: "selection",
     },
   ],
+});
+
+export const userIdState = atom({
+  key: "userId",
+  default: null,
+});
+
+export const loginState = atom({
+  key: "loginToken",
+  default: null,
+  effects_UNSTABLE: [persistAtom],
 });

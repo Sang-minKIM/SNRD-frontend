@@ -1,10 +1,12 @@
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { postLogin } from "../api";
 import bgimg from "../assets/loginBg.svg";
 import squareLogo from "../assets/squareLogo.svg";
+import { loginState, userIdState } from "../atom";
 
 export const Container = styled.div`
   width: 100vw;
@@ -102,6 +104,8 @@ interface IForm {
 }
 
 export function Login() {
+  const [isLoggedIn, setIsLoggedIn] = useRecoilState(loginState);
+  const [userId, setUserId] = useRecoilState(userIdState);
   const { register, handleSubmit } = useForm<IForm>();
   const navigate = useNavigate();
   const mutation = useMutation(postLogin, {
@@ -113,6 +117,8 @@ export function Login() {
     onSuccess: (data, variables, context) => {
       console.log("success", data, variables, context);
       navigate(`/profile/33`);
+      setIsLoggedIn(data.token);
+      setUserId(data.id);
     },
   });
 

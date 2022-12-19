@@ -127,6 +127,7 @@ export function postLogin({ email, password }: ILoginProp) {
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
+      credentials: "include",
     },
     body: JSON.stringify({ email, password }),
   }).then((response) => response.json());

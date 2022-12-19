@@ -10,6 +10,12 @@ import {
 import styled from "styled-components";
 
 import logo from "../assets/logo.svg";
+import introBtn from "../assets/introBtn.svg";
+import loginBtn from "../assets/loginBtn.svg";
+import logoutBtn from "../assets/logoutBtn.svg";
+import profileBtn from "../assets/profileBtn.svg";
+import { useRecoilValue } from "recoil";
+import { userIdState } from "../atom";
 
 const Nav = styled.nav`
   min-width: 870px;
@@ -35,8 +41,8 @@ const Items = styled.ul`
 `;
 
 const Item = styled.li`
-  padding: 10px;
   color: white;
+  padding: 0 10px;
 `;
 
 const Col = styled.div`
@@ -61,9 +67,7 @@ const ProjectList = styled.div`
   justify-content: flex-start;
   width: 170px;
   z-index: 21;
-
   height: 240px;
-
   right: 70px;
   top: 55px;
   position: absolute;
@@ -85,20 +89,25 @@ const ProjectList = styled.div`
     margin-top: -10px;
   }
 `;
-
-const ProjectLabel = styled.div`
-  width: 100%;
+const LinkBtn = styled(Link)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 50px;
 `;
 
-const ProjectLink = styled(Link)`
-  height: 30px;
-  width: 100%;
+const LinkSvg = styled.img`
+  height: 25px;
+`;
 
-  display: flex;
-  padding-left: 15px;
-  justify-content: flex-start;
-  align-items: center;
+const LogSvg = styled(LinkSvg)`
+  height: 20px;
+  margin-bottom: 5px;
+`;
+
+const ProfileSvg = styled(LinkSvg)`
+  height: 21px;
+  margin-bottom: 7px;
 `;
 
 const Overlay = styled.div`
@@ -113,17 +122,9 @@ const Overlay = styled.div`
   z-index: 20;
 `;
 
-interface IProject {
-  id: number;
-  title: string;
-  teammates: string[];
-  duration: string[];
-  introduction: string;
-}
-
 function Header() {
   const [isLoggedin, setIsLoggedIn] = useState(false);
-  const { userId } = useParams();
+  const userId = useRecoilValue(userIdState);
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -131,7 +132,7 @@ function Header() {
   //   getUser(userId)
   // );
   // let isLoading = userLoading;
-  const profileMatch = useMatch("/profile/:id");
+  const profileMatch = useMatch("/profile/:userId");
   const loginMatch = useMatch("/login");
   const joinMatch = useMatch("/join");
   const introMatch = useMatch("/");
@@ -146,24 +147,32 @@ function Header() {
         <Items>
           {introMatch ? null : (
             <Item>
-              <Link to="">소개</Link>
+              <LinkBtn to="/">
+                <LinkSvg src={introBtn} />
+              </LinkBtn>
             </Item>
           )}
 
           {projectMatch || boardMatch ? (
             <>
               <Item>
-                <Link to="profile/:id">프로필</Link>
+                <LinkBtn to={`/profile/${userId}`}>
+                  <ProfileSvg src={profileBtn} />
+                </LinkBtn>
               </Item>
             </>
           ) : null}
-          {loginMatch || joinMatch ? null : isLoggedin ? (
+          {loginMatch ? null : isLoggedin ? (
             <Item>
-              <Link to="logout">로그아웃</Link>
+              <LinkBtn to="/logout">
+                <LogSvg src={logoutBtn} />
+              </LinkBtn>
             </Item>
           ) : (
             <Item>
-              <Link to="login">로그인</Link>
+              <LinkBtn to="/login">
+                <LogSvg src={loginBtn} />
+              </LinkBtn>
             </Item>
           )}
         </Items>
