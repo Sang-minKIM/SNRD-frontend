@@ -4,11 +4,11 @@ import S3 from "react-aws-s3-typescript";
 import { v4 as uuidv4 } from "uuid";
 import { Editor } from "@toast-ui/react-editor";
 import { useEffect, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { getContents, postContents } from "../api";
-import { toDoState } from "../atom";
+import { categoryState, toDoState } from "../atom";
 
 const Container = styled.div`
   width: 100%;
@@ -45,10 +45,13 @@ export function Write() {
   const posting = editorRef.current?.getInstance().getMarkdown();
   const { contentId } = useParams();
   console.log(contentId);
-  const { isLoading: contentLoading, data: contentData } = useQuery<IContents>(
-    ["content", contentId],
-    () => getContents(contentId)
-  );
+
+  // const { isLoading: contentLoading, data: contentData } = useQuery<IContents>(
+  //   ["content", contentId],
+  //   () => getContents(contentId)
+  // );
+  const location = useLocation();
+  const contentData = location.state;
 
   const postMutation = useMutation(postContents, {
     onMutate: (variable) => {

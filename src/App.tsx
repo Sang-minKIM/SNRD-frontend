@@ -18,8 +18,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/join" element={<Join />} />
         <Route path="/profile/:userId" element={<Profile />} />
-        <Route path="/write/:contentId" element={<Write />} />
         <Route path="/boards/:projectId" element={<Boards />} />
+        <Route path="/write/:contentId" element={<Write />} />
         <Route path="/main/:projectId" element={<Project />} />
         <Route path="/" element={<Intro />} />
         <Route path="*" element={<NotFound />} />
