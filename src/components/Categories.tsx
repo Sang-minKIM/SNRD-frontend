@@ -126,7 +126,7 @@ function Categories() {
     });
   };
 
-  // useEffect(() => mutation.mutate(), [categories]);
+  useEffect(() => mutation.mutate(), [categories]);
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
