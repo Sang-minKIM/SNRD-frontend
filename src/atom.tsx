@@ -43,11 +43,11 @@ export const categoryState = atom<ICategoryState>({
 
 export interface IToDo {
   id: number;
-  categoryIndex: number;
-  part: string;
+  state_index: number;
+  category: string;
   topic: string;
-  contents: string;
-  commentCounts: number;
+  comment_list: any;
+  state: string;
 }
 export interface IToDoState {
   [key: string]: IToDo[];
