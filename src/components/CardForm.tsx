@@ -203,19 +203,20 @@ export function NewCardForm() {
   });
   const { register, handleSubmit } = useForm<IForm>();
   const onValid = ({ topic, part }: IForm) => {
-    // const newTopic = {
-    //   id: Date.now(),
-    //   categoryIndex: category[part].length,
-    //   category: part!,
-    //   topic: topic,
-    //   commentCounts: 0,
-    // };
-    // setTodos((allTodos) => {
-    //   return {
-    //     ...allTodos,
-    //     [newCard!]: [...allTodos[newCard!], newTopic],
-    //   };
-    // });
+    const newTopic = {
+      id: Date.now(),
+      state_index: 0,
+      category: part!,
+      topic,
+      comment_list: [],
+      state: newCard!,
+    };
+    setTodos((allTodos) => {
+      return {
+        ...allTodos,
+        [newCard!]: [...allTodos[newCard!], newTopic],
+      };
+    });
     setNewCard(null);
   };
 
@@ -229,10 +230,10 @@ export function NewCardForm() {
       />
       <Label>파트</Label>
       <Select {...register("part")}>
-        <Option value="plan">기획</Option>
-        <Option value="design">디자인</Option>
-        <Option value="frontend">프론트엔드</Option>
-        <Option value="backend">백엔드</Option>
+        <Option value="PM">기획</Option>
+        <Option value="Design">디자인</Option>
+        <Option value="Frontend">프론트엔드</Option>
+        <Option value="Backend">백엔드</Option>
       </Select>
       <Submit type="submit" value="Done" />
     </Form>
