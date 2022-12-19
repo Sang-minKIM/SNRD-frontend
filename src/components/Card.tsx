@@ -60,16 +60,16 @@ function Card({ todo, index }: ICard) {
   const [todoColor, setTodoColor] = useState("");
   useEffect(() => {
     switch (todo.category) {
-      case "plan":
+      case "PM":
         setTodoColor("#56d1b5");
         break;
-      case "design":
+      case "Design":
         setTodoColor("#f8c958");
         break;
-      case "frontend":
+      case "Frontend":
         setTodoColor("#3498db");
         break;
-      case "backend":
+      case "Backend":
         setTodoColor("#746af1");
         break;
       default:
