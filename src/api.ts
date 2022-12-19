@@ -40,7 +40,7 @@ export function putTasks({
 }) {
   console.log(newTask);
   return fetch(`${BASE_URL}/boardpage/${projectId}/stateChange/`, {
-    method: "PUT",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
