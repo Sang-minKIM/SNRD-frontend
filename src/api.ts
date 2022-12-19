@@ -25,25 +25,27 @@ export function putCategories({
   }).then((response) => response.json());
 }
 
-export function getTasks() {
-  return fetch(`${BASE_URL}/task`).then((response) => response.json());
+export function getTasks(projectId: string | undefined) {
+  return fetch(`${BASE_URL}/boardpage/${projectId}/`).then((response) =>
+    response.json()
+  );
 }
 
-export function putTasks(newTask: IToDoState) {
+export function putTasks({
+  projectId,
+  newTask,
+}: {
+  projectId: string | undefined;
+  newTask: IToDoState;
+}) {
   console.log(newTask);
-  return fetch(`${BASE_URL}/task/`, {
+  return fetch(`${BASE_URL}/boardpage/${projectId}/stateChange/`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(newTask),
   }).then((response) => response.json());
-}
-
-export function getContents(contentId: string | undefined) {
-  return fetch(`${BASE_URL}/result/${contentId}/`).then((response) =>
-    response.json()
-  );
 }
 
 export interface IContents {

@@ -5,10 +5,9 @@ import { v4 as uuidv4 } from "uuid";
 import { Editor } from "@toast-ui/react-editor";
 import { useEffect, useRef } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
+
 import styled from "styled-components";
-import { getContents, postContents } from "../api";
-import { categoryState, toDoState } from "../atom";
+import { postContents } from "../api";
 
 const Container = styled.div`
   width: 100%;

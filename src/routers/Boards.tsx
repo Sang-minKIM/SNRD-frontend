@@ -11,6 +11,7 @@ import Navigation from "../components/Navigation";
 import { NewCardForm } from "../components/CardForm";
 import { TrashCan } from "../components/TrashCan";
 import { NewCard, newCardVariant, Overlay, overlayVariant } from "./Project";
+import { useParams } from "react-router-dom";
 
 const Wrapper = styled.div`
   position: fixed;
@@ -115,14 +116,15 @@ interface ISnapshotProps {
 }
 
 function Boards() {
+  const { projectId } = useParams();
   const [toDos, setToDos] = useRecoilState(toDoState);
   const [newCard, setNewCard] = useRecoilState(newCardState);
-  const { isLoading } = useQuery(["tasks"], getTasks, {
+  const { isLoading } = useQuery(["tasks"], () => getTasks(projectId), {
     onSuccess: (data) => {
       setToDos(() => data);
     },
   });
-  const mutation = useMutation(() => putTasks(toDos), {
+  const mutation = useMutation(() => putTasks({ projectId, newTask: toDos }), {
     onSuccess: (data, variables, context) => {
       console.log("success", data, variables, context);
     },
