@@ -119,13 +119,17 @@ interface IForm {
 }
 
 export function NewCategoryForm() {
+  const { projectId } = useParams();
   const [newCard, setNewCard] = useRecoilState(newCardState);
   const [category, setCategory] = useRecoilState(categoryState);
-  const mutation = useMutation(() => putCategories(category), {
-    onSuccess: (data, variables, context) => {
-      console.log("success", data, variables, context);
-    },
-  });
+  const mutation = useMutation(
+    () => putCategories({ projectId, newCategories: category }),
+    {
+      onSuccess: (data, variables, context) => {
+        console.log("success", data, variables, context);
+      },
+    }
+  );
   const { register, handleSubmit } = useForm<IForm>();
   const onValid = ({ topic }: IForm) => {
     const newTopic = {
@@ -160,13 +164,17 @@ export function NewCategoryForm() {
 }
 
 export function EditCategoryForm() {
+  const { projectId } = useParams();
   const [newCard, setNewCard] = useRecoilState(newCardState);
   const [category, setCategory] = useRecoilState(categoryState);
-  const mutation = useMutation(() => putCategories(category), {
-    onSuccess: (data, variables, context) => {
-      console.log("success", data, variables, context);
-    },
-  });
+  const mutation = useMutation(
+    () => putCategories({ projectId, newCategories: category }),
+    {
+      onSuccess: (data, variables, context) => {
+        console.log("success", data, variables, context);
+      },
+    }
+  );
   const { register, handleSubmit } = useForm<IForm>();
   const onValid = () => {};
   useEffect(() => mutation.mutate(), [category]);

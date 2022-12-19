@@ -203,7 +203,7 @@ const NewCard = styled(motion.div)`
 `;
 
 interface IList {
-  id: number;
+  project_id: number;
   title: string;
   teammates: string[];
   teammates_name: string[];
@@ -238,7 +238,7 @@ export function Profile() {
   const [edit, setEdit] = useState(false);
   const { data, isLoading } = useQuery<IData>(
     ["project", userId],
-    () => getProfile(33),
+    () => getProfile(userId),
     {
       onSuccess(data) {
         console.dir(data);
@@ -286,8 +286,8 @@ export function Profile() {
             </ProjectMenu>
             <ProjectList>
               {data?.project_list.map((project) => (
-                <Project key={project.id}>
-                  <ProjectTitle to={`/main/${project.id}`}>
+                <Project key={project.project_id}>
+                  <ProjectTitle to={`/main/${project.project_id}`}>
                     {project.title}
                   </ProjectTitle>
                   <ProjectInfo></ProjectInfo>

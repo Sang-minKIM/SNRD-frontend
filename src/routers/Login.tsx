@@ -116,7 +116,7 @@ export function Login() {
     },
     onSuccess: (data, variables, context) => {
       console.log("success", data, variables, context);
-      navigate(`/profile/33`);
+      navigate(`/profile/${data.id}`);
       setIsLoggedIn(data.token);
       setUserId(data.id);
     },

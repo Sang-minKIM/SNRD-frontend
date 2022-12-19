@@ -8,6 +8,7 @@ import { putCategories } from "../api";
 import { categoryState, newCardState } from "../atom";
 import Category from "./Category";
 import { motion } from "framer-motion";
+import { useParams } from "react-router-dom";
 
 const Wrapper = styled.div`
   height: 97%;
@@ -100,12 +101,16 @@ const Text = styled.span`
 
 function Categories() {
   const [categories, setCategories] = useRecoilState(categoryState);
+  const { projectId } = useParams();
   const setNewCard = useSetRecoilState(newCardState);
-  const mutation = useMutation(() => putCategories(categories), {
-    onSuccess: (data, variables, context) => {
-      console.log("success", data, variables, context);
-    },
-  });
+  const mutation = useMutation(
+    () => putCategories({ projectId, newCategories: categories }),
+    {
+      onSuccess: (data, variables, context) => {
+        console.log("success", data, variables, context);
+      },
+    }
+  );
   const onDragEnd = (info: DropResult) => {
     const { destination, source } = info;
 

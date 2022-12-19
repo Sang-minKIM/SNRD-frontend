@@ -9,9 +9,15 @@ export function getCategories(projectId: string | undefined) {
   );
 }
 
-export function putCategories(newCategories: ICategoryState) {
-  return fetch(`${BASE_URL}/category/`, {
-    method: "PUT",
+export function putCategories({
+  projectId,
+  newCategories,
+}: {
+  projectId: string | undefined;
+  newCategories: ICategoryState;
+}) {
+  return fetch(`${BASE_URL}/mainpage/${projectId}/change`, {
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
@@ -70,7 +76,7 @@ export function getUser(userId: string | undefined) {
   );
 }
 
-export function getProfile(userId: number | undefined) {
+export function getProfile(userId: string | undefined) {
   return fetch(`${BASE_URL}/profilepage/${userId}/`).then((response) =>
     response.json()
   );
@@ -127,7 +133,6 @@ export function postLogin({ email, password }: ILoginProp) {
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
-      credentials: "include",
     },
     body: JSON.stringify({ email, password }),
   }).then((response) => response.json());

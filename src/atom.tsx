@@ -95,6 +95,11 @@ export const userIdState = atom({
   default: null,
 });
 
+export const emailState = atom({
+  key: "email",
+  default: "",
+});
+
 export const loginState = atom({
   key: "loginToken",
   default: null,
