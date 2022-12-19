@@ -49,9 +49,7 @@ export function Write() {
   //   () => getContents(contentId)
   // );
   const location = useLocation();
-  const contentData = location.state;
-  console.log("location", location);
-  console.log("state", contentData);
+  const { contentData } = location.state;
 
   const postMutation = useMutation(postContents, {
     onMutate: (variable) => {
