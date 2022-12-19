@@ -144,9 +144,12 @@ function Header() {
           <Logo src={logo} />
         </Col>
         <Items>
-          <Item>
-            <Link to="">소개</Link>
-          </Item>
+          {introMatch ? null : (
+            <Item>
+              <Link to="">소개</Link>
+            </Item>
+          )}
+
           {projectMatch || boardMatch ? (
             <>
               <Item>
@@ -154,7 +157,7 @@ function Header() {
               </Item>
             </>
           ) : null}
-          {loginMatch || introMatch || joinMatch ? null : isLoggedin ? (
+          {loginMatch || joinMatch ? null : isLoggedin ? (
             <Item>
               <Link to="logout">로그아웃</Link>
             </Item>
