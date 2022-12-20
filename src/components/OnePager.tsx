@@ -1,8 +1,11 @@
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { categoryState } from "../atom";
+import { categoryState, userIdState } from "../atom";
 import "@toast-ui/editor/dist/toastui-editor-viewer.css";
 import { Viewer } from "@toast-ui/react-editor";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "react-router-dom";
+import { getProfile } from "../api";
 
 // import { useIntersectionObservation } from "./useIntersectionObserver";
 
@@ -62,8 +65,37 @@ const ViewerWrapper = styled.div`
   padding: 10px;
 `;
 
+interface IList {
+  project_id: number;
+  title: string;
+  teammates: string[];
+  teammates_name: string[];
+  duration: string;
+  introduction: string;
+}
+interface IData {
+  project_list: IList[];
+  user: {
+    name: string;
+    information: string;
+  };
+}
+
 export function OnePager() {
   const data = useRecoilValue(categoryState);
+  const userId = useRecoilValue(userIdState)
+  const {projectId} = useParams()
+  const {isLoading, data:profileData} = useQuery<IData>(
+    ["project", userId],
+    () => getProfile(userId),
+    {
+      onSuccess(data) {
+        console.log(data);
+      },
+    }
+  );
+ 
+  
   // const rootRef = useRef<any>(null);
   // const [refState, setRefState] = useState(false); // 데이터가 로드되기전에 ref가 선언되어서 데이터가 로드된 후 재렌더링 해주기 위해 state를 선언함
   // const targetRef = useRef<any>([]);

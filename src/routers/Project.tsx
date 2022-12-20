@@ -83,6 +83,7 @@ export function Project() {
         console.log("data", data);
         console.log("category", categories);
       },
+      staleTime: 1000,
     }
   );
 
