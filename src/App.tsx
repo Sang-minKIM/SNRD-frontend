@@ -9,6 +9,7 @@ import { NotFound } from "./routers/NotFound";
 import { Profile } from "./routers/Profile";
 import { Write } from "./routers/Write";
 import { Intro } from "./routers/Intro";
+import { Logout } from "./routers/Logout";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <Header />
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/logout" element={<Logout />} />
         <Route path="/join" element={<Join />} />
         <Route path="/profile/:userId" element={<Profile />} />
         <Route path="/boards/:projectId" element={<Boards />} />

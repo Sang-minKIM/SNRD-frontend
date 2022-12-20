@@ -105,33 +105,39 @@ const LogSvg = styled(LinkSvg)`
   margin-bottom: 5px;
 `;
 
+const LogoutSvg = styled(LinkSvg)`
+  margin-bottom: 5.5px;
+  height: 18px;
+`;
+
 const ProfileSvg = styled(LinkSvg)`
-  height: 21px;
+  height: 20px;
   margin-bottom: 7px;
 `;
 
-const Overlay = styled.div`
-  background-color: transparent;
-  width: 100%;
-  height: 100vh;
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  bottom: 0;
-  z-index: 20;
-`;
+// const Overlay = styled.div`
+//   background-color: transparent;
+//   width: 100%;
+//   height: 100vh;
+//   position: absolute;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   bottom: 0;
+//   z-index: 20;
+// `;
 
 function Header() {
   const isLoggedin = useRecoilValue(loginState);
   const userId = useRecoilValue(userIdState);
   const navigate = useNavigate();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  // const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // const { isLoading: userLoading, data: userData } = useQuery(["user"], () =>
   //   getUser(userId)
   // );
   // let isLoading = userLoading;
+
   const profileMatch = useMatch("/profile/:userId");
   const loginMatch = useMatch("/login");
   const joinMatch = useMatch("/join");
@@ -145,6 +151,13 @@ function Header() {
           <Logo src={logo} />
         </Col>
         <Items>
+          {introMatch && isLoggedin ? (
+            <Item>
+              <LinkBtn to={`/profile/${userId}`}>
+                <ProfileSvg src={profileBtn} />
+              </LinkBtn>
+            </Item>
+          ) : null}
           {introMatch ? null : (
             <Item>
               <LinkBtn to="/">
@@ -165,7 +178,7 @@ function Header() {
           {loginMatch ? null : isLoggedin ? (
             <Item>
               <LinkBtn to="/logout">
-                <LogSvg src={logoutBtn} />
+                <LogoutSvg src={logoutBtn} />
               </LinkBtn>
             </Item>
           ) : (

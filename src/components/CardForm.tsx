@@ -260,22 +260,29 @@ export function EditProjectInfo() {
     dateStyle: "full",
   });
 
-  const posting = {
-    id,
-    title: "",
-    teammates: [],
-    duration: `${startDate} ~ ${endDate}`,
-    introduction: "",
-  };
-
   const mutation = useMutation(putProjectInfo, {
     onSuccess: (data, variables, context) => {
       console.log("success", data, variables, context);
     },
   });
   const { register, handleSubmit } = useForm();
-  const onValid = () => {
-    // mutation.mutate({ id, posting });
+  const onValid = ({
+    topic,
+    slogan,
+    team,
+  }: {
+    topic?: string;
+    slogan?: string;
+    team?: string;
+  }) => {
+    const teammates = team && team.split(",").map((v) => v.trim());
+    const posting = {
+      title: topic,
+      teammates: teammates,
+      duration: `${startDate} ~ ${endDate}`,
+      slogan,
+    };
+    mutation.mutate({ id, posting });
     setNewCard(null);
   };
   return (
@@ -303,7 +310,7 @@ export function EditProjectInfo() {
       <Label>팀원</Label>
       <Title
         {...register("team")}
-        placeholder="팀원의 email을 입력하세요. (진형@likelion.org, 영훈@likelion.org, ...)"
+        placeholder="팀원의 이름을 입력하세요. (이진형, 안영훈, 이예린 ...)"
       />
 
       <Submit type="submit" value="확인" />

@@ -9,6 +9,7 @@ import { getProfile } from "../api";
 import editImg from "../assets/edit.svg";
 import { newCardState } from "../atom";
 import { EditProjectInfo } from "../components/CardForm";
+import { Loader } from "../components/Loader";
 
 const Container = styled.div`
   width: 100%;
@@ -252,7 +253,7 @@ export function Profile() {
   return (
     <>
       {isLoading ? (
-        "loading..."
+        <Loader type="bars" color="#00355B" message="불러오는 중..." />
       ) : (
         <Container>
           <ProfileBoard>

@@ -6,7 +6,8 @@ import styled from "styled-components";
 import { postLogin } from "../api";
 import bgimg from "../assets/loginBg.svg";
 import squareLogo from "../assets/squareLogo.svg";
-import { loginState, userIdState } from "../atom";
+import { emailState, loginState, userIdState } from "../atom";
+import { Loader } from "../components/Loader";
 
 export const Container = styled.div`
   width: 100vw;
@@ -106,6 +107,7 @@ interface IForm {
 export function Login() {
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(loginState);
   const [userId, setUserId] = useRecoilState(userIdState);
+  const [email, setEmail] = useRecoilState(emailState);
   const { register, handleSubmit } = useForm<IForm>();
   const navigate = useNavigate();
   const mutation = useMutation(postLogin, {
@@ -124,38 +126,44 @@ export function Login() {
 
   const onValid = ({ email, password }: IForm) => {
     mutation.mutate({ email, password });
+    setEmail(email);
   };
 
   return (
     <Container>
-      <LoginForm onSubmit={handleSubmit(onValid)}>
-        <Logo src={squareLogo} />
+      {mutation.isLoading ? (
+        <Loader type="bars" color="#00355B" message="로그인 중..." />
+      ) : (
+        <LoginForm onSubmit={handleSubmit(onValid)}>
+          <Logo src={squareLogo} />
 
-        <IdInput
-          {...register("email", {
-            required: "ID를 입력해주세요.",
-            minLength: {
-              value: 3,
-              message: "아이디가 너무 짧습니다.",
-            },
-            maxLength: 15,
-          })}
-          placeholder="아이디"
-        />
-        <PasswordInput
-          {...register("password", {
-            required: true,
-            minLength: 3,
-            maxLength: 25,
-          })}
-          placeholder="비밀번호"
-        />
-        <LoginBtn type="submit" value="로그인" />
-        <JoinNav>
-          <JoinSpan>아직 계정이 없으신가요?</JoinSpan>
-          <JoinBtn to="/join">회원가입</JoinBtn>
-        </JoinNav>
-      </LoginForm>
+          <IdInput
+            {...register("email", {
+              required: "ID를 입력해주세요.",
+              minLength: {
+                value: 3,
+                message: "아이디가 너무 짧습니다.",
+              },
+              maxLength: 15,
+            })}
+            placeholder="아이디"
+          />
+          <PasswordInput
+            {...register("password", {
+              required: true,
+              minLength: 3,
+              maxLength: 25,
+            })}
+            placeholder="비밀번호"
+          />
+          <LoginBtn type="submit" value="로그인" />
+          <JoinNav>
+            <JoinSpan>아직 계정이 없으신가요?</JoinSpan>
+            <JoinBtn to="/join">회원가입</JoinBtn>
+          </JoinNav>
+        </LoginForm>
+      )}
+
       <BgImg src={bgimg} />
     </Container>
   );

@@ -13,6 +13,7 @@ import Navigation from "../components/Navigation";
 import { EditProjectInfo, NewCategoryForm } from "../components/CardForm";
 
 import { OnePager } from "../components/OnePager";
+import { Loader } from "../components/Loader";
 
 const Wrapper = styled.div`
   min-width: 900px;
@@ -112,7 +113,7 @@ export function Project() {
     <>
       <Navigation />
       {isLoading ? (
-        <span>Loading...</span>
+        <Loader type="bars" color="#00355B" message="불러오는 중..." />
       ) : (
         <Wrapper>
           <Categories />

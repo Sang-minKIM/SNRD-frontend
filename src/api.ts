@@ -39,7 +39,7 @@ export function putTasks({
   newTask: IToDoState;
 }) {
   console.log(newTask);
-  return fetch(`${BASE_URL}/boardpage/${projectId}/stateChange/`, {
+  return fetch(`${BASE_URL}/boardpage/${projectId}/stateChange`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -48,27 +48,27 @@ export function putTasks({
   }).then((response) => response.json());
 }
 
-export interface IContents {
-  id?: number;
-  categoryIndex?: number;
-  part?: string;
-  topic?: string;
-  contents?: any;
-  commentCounts?: number;
-}
-
 export interface IContentsProp {
-  contentId?: string;
-  posting?: IContents;
+  projectId?: string;
+  id?: string;
+  topic?: string;
+  category?: string;
+  contents?: string;
 }
 
-export function postContents({ contentId, posting }: IContentsProp) {
-  return fetch(`${BASE_URL}/result/${contentId}/`, {
-    method: "PUT",
+export function postContents({
+  projectId,
+  id,
+  topic,
+  category,
+  contents,
+}: IContentsProp) {
+  return fetch(`${BASE_URL}/mainpage/${projectId}/${id}/editTopicContents`, {
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(posting),
+    body: JSON.stringify({ id, topic, category, contents }),
   }).then((response) => response.json());
 }
 
@@ -85,11 +85,10 @@ export function getProfile(userId: string | undefined) {
 }
 
 export interface IInfo {
-  id: number;
-  title: string;
-  teammates: string[];
-  duration: string[];
-  introduction: string;
+  title?: string;
+  teammates: any;
+  duration?: string;
+  slogan?: string;
 }
 
 export interface IInfoProp {
@@ -98,8 +97,8 @@ export interface IInfoProp {
 }
 
 export function putProjectInfo({ id, posting }: IInfoProp) {
-  return fetch(`${BASE_URL}/project/${id}/`, {
-    method: "PUT",
+  return fetch(`${BASE_URL}/mainpage/${id}/editProjectInfo`, {
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
@@ -137,5 +136,16 @@ export function postLogin({ email, password }: ILoginProp) {
       Accept: "application/json",
     },
     body: JSON.stringify({ email, password }),
+  }).then((response) => response.json());
+}
+
+export function postLogout(email: string | undefined) {
+  return fetch(`${BASE_URL}/accounts/logout/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({ email }),
   }).then((response) => response.json());
 }

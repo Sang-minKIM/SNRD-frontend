@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import S3 from "react-aws-s3-typescript";
 import { v4 as uuidv4 } from "uuid";
@@ -11,8 +11,8 @@ import { postContents } from "../api";
 
 const Container = styled.div`
   width: 100%;
-  height: calc(100vh - 60px);
-  top: 60px;
+  height: calc(100vh - 50px);
+  top: 50px;
   position: fixed;
 `;
 
@@ -28,6 +28,10 @@ const Submit = styled.button`
   color: ${(props) => props.theme.white.lighter};
 `;
 
+const Cancel = styled(Submit)`
+  right: 103px;
+`;
+
 interface IContents {
   id: number;
   categoryIndex: number;
@@ -40,6 +44,7 @@ interface IContents {
 window.Buffer = window.Buffer || require("buffer").Buffer;
 
 export function Write() {
+  const navigate = useNavigate();
   const editorRef = useRef<any>(null);
   const posting = editorRef.current?.getInstance().getMarkdown();
   const { contentId } = useParams();
@@ -49,7 +54,7 @@ export function Write() {
   //   () => getContents(contentId)
   // );
   const location = useLocation();
-  const { contentData } = location.state;
+  const { projectId, topic, category, contentData } = location.state;
   console.log("location", location);
   console.log("contentData", contentData);
 
@@ -67,8 +72,11 @@ export function Write() {
 
   const handleRegisterButton = () => {
     postMutation.mutate({
-      contentId,
-      posting: { ...contentData, contents: posting },
+      projectId,
+      id: contentId,
+      topic,
+      category,
+      contents: posting,
     });
     // 입력창에 입력한 내용을 MarkDown 형태로 취득
   };
@@ -116,6 +124,9 @@ export function Write() {
         ]}
         useCommandShortcut={false} // 키보드 입력 컨트롤 방지
       />
+      <Cancel type="button" onClick={() => navigate(-1)}>
+        편집 취소
+      </Cancel>
       <Submit type="button" onClick={handleRegisterButton}>
         등록
       </Submit>

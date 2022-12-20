@@ -93,11 +93,13 @@ export const dateState = atom<IDate[]>({
 export const userIdState = atom({
   key: "userId",
   default: null,
+  effects_UNSTABLE: [persistAtom],
 });
 
 export const emailState = atom({
   key: "email",
   default: "",
+  effects_UNSTABLE: [persistAtom],
 });
 
 export const loginState = atom({
