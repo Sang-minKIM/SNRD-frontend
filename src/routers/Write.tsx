@@ -8,6 +8,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import styled from "styled-components";
 import { postContents } from "../api";
+import { Loader } from "../components/Loader";
 
 const Container = styled.div`
   width: 100%;
@@ -60,18 +61,17 @@ export function Write() {
 
   const postMutation = useMutation(postContents, {
     onMutate: (variable) => {
-      const posting = editorRef.current?.getInstance().getMarkdown();
-      console.log("onMutate", variable, posting);
-      return posting;
+      console.log("onMutate", variable);
+
       // variable : {loginId: 'xxx', password; 'xxx'}
     },
     onSuccess: (data, variables, context) => {
       console.log("success", data, variables, context);
-      navigate(`/main/${projectId}`);
     },
   });
 
   const handleRegisterButton = () => {
+    const posting = editorRef.current?.getInstance().getMarkdown();
     postMutation.mutate({
       projectId,
       id: contentId,
@@ -80,6 +80,7 @@ export function Write() {
       contents: posting,
     });
     // 입력창에 입력한 내용을 MarkDown 형태로 취득
+    navigate(`/main/${projectId}`);
   };
   // s3에 image 업로드하기
   useEffect(() => {
@@ -108,29 +109,35 @@ export function Write() {
 
   return (
     <Container>
-      <Editor
-        height="100%"
-        ref={editorRef}
-        placeholder="내용을 입력해주세요."
-        previewStyle="vertical"
-        initialEditType="wysiwyg"
-        initialValue={contentData && contentData}
-        toolbarItems={[
-          // 툴바 옵션 설정
-          ["heading", "bold", "italic", "strike"],
-          ["hr", "quote"],
-          ["ul", "ol", "task", "indent", "outdent"],
-          ["table", "image", "link"],
-          ["code", "codeblock"],
-        ]}
-        useCommandShortcut={false} // 키보드 입력 컨트롤 방지
-      />
-      <Cancel type="button" onClick={() => navigate(-1)}>
-        편집 취소
-      </Cancel>
-      <Submit type="button" onClick={handleRegisterButton}>
-        등록
-      </Submit>
+      {postMutation.isLoading ? (
+        <Loader type="bars" color="#00355B" message="불러오는 중..." />
+      ) : (
+        <>
+          <Editor
+            height="100%"
+            ref={editorRef}
+            placeholder="내용을 입력해주세요."
+            previewStyle="vertical"
+            initialEditType="wysiwyg"
+            initialValue={contentData && contentData}
+            toolbarItems={[
+              // 툴바 옵션 설정
+              ["heading", "bold", "italic", "strike"],
+              ["hr", "quote"],
+              ["ul", "ol", "task", "indent", "outdent"],
+              ["table", "image", "link"],
+              ["code", "codeblock"],
+            ]}
+            useCommandShortcut={false} // 키보드 입력 컨트롤 방지
+          />
+          <Cancel type="button" onClick={() => navigate(-1)}>
+            편집 취소
+          </Cancel>
+          <Submit type="button" onClick={handleRegisterButton}>
+            등록
+          </Submit>
+        </>
+      )}
     </Container>
   );
 }

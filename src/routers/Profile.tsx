@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
@@ -8,9 +8,14 @@ import styled from "styled-components";
 import { getProfile } from "../api";
 import editImg from "../assets/edit.svg";
 import { emailState, newCardState } from "../atom";
-import { EditProfile, EditProjectInfo } from "../components/CardForm";
+import {
+  AddNewProject,
+  EditProfile,
+  EditProjectInfo,
+} from "../components/CardForm";
 import { Loader } from "../components/Loader";
 import projectImg from "../assets/projectImg.png";
+import { Overlay } from "./Project";
 
 const Container = styled.div`
   width: 100%;
@@ -194,17 +199,6 @@ const ProjectInfo = styled.div`
   }
 `;
 
-const Overlay = styled(motion.div)`
-  width: 100vw;
-  height: calc(100vh - 40px);
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  bottom: 0;
-  background-color: "rgba(0, 0, 0, 0.5)";
-`;
-
 const NewCard = styled(motion.div)`
   background-color: ${(props) => props.theme.white.lighter};
   border-radius: 5px;
@@ -213,6 +207,8 @@ const NewCard = styled(motion.div)`
   border: none;
   position: absolute;
   top: 10%;
+  left: 30%;
+  z-index: 21;
 `;
 const ColorBox = styled.div`
   width: 20px;
@@ -301,7 +297,7 @@ export function Profile() {
   const email = useRecoilValue(emailState);
   const [newCard, setNewCard] = useRecoilState(newCardState);
   const { userId } = useParams();
-  const [edit, setEdit] = useState(false);
+
   const { data, isLoading } = useQuery<IData>(
     ["project", userId],
     () => getProfile(userId),
@@ -376,7 +372,9 @@ export function Profile() {
                     <ProjectTeammates>
                       {`팀원: `}
                       {project.teammates.map((teammate) => (
-                        <ProjectTeammate>{teammate}</ProjectTeammate>
+                        <ProjectTeammate key={teammate}>
+                          {teammate}
+                        </ProjectTeammate>
                       ))}
                     </ProjectTeammates>
                   </ProjectInfo>
@@ -384,42 +382,46 @@ export function Profile() {
               ))}
             </ProjectList>
           </ProjectBoard>
-          {newCard === "addProject" ? (
-            <Overlay
-              variants={overlayVariant}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              onClick={() => setNewCard(null)}
-            >
-              <NewCard
-                variants={newCardVariant}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-              >
-                <EditProjectInfo />
-              </NewCard>
-            </Overlay>
-          ) : null}
-          {newCard === "editProfile" ? (
-            <Overlay
-              variants={overlayVariant}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              onClick={() => setNewCard(null)}
-            >
-              <NewCard
-                variants={newCardVariant}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-              >
-                <EditProfile />
-              </NewCard>
-            </Overlay>
-          ) : null}
+          <AnimatePresence>
+            {newCard === "addProject" ? (
+              <>
+                <Overlay
+                  variants={overlayVariant}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  onClick={() => setNewCard(null)}
+                ></Overlay>
+                <NewCard
+                  variants={newCardVariant}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                >
+                  <AddNewProject />
+                </NewCard>
+              </>
+            ) : null}
+            {newCard === "editProfile" ? (
+              <>
+                <Overlay
+                  variants={overlayVariant}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  onClick={() => setNewCard(null)}
+                ></Overlay>
+                <NewCard
+                  variants={newCardVariant}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                >
+                  <EditProfile />
+                </NewCard>
+              </>
+            ) : null}
+          </AnimatePresence>
         </Container>
       )}
     </>

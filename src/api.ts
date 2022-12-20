@@ -83,6 +83,23 @@ export function getProfile(userId: string | undefined) {
     response.json()
   );
 }
+export function postProfile({
+  userId,
+  name,
+  information,
+}: {
+  userId: string | undefined;
+  name: string | undefined;
+  information?: string;
+}) {
+  return fetch(`${BASE_URL}/profilepage/${userId}/information`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ name, information }),
+  }).then((response) => response.json());
+}
 
 export interface IInfo {
   title?: string;
@@ -98,6 +115,16 @@ export interface IInfoProp {
 
 export function putProjectInfo({ id, posting }: IInfoProp) {
   return fetch(`${BASE_URL}/mainpage/${id}/editProjectInfo`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(posting),
+  }).then((response) => response.json());
+}
+
+export function addProject({ userId, posting }: any) {
+  return fetch(`${BASE_URL}/profilepage/${userId}/create`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -6,13 +6,6 @@ const { persistAtom } = recoilPersist({
   storage: localStorage,
 });
 
-export const infoState = atom({
-  key: "information",
-  default: {
-    name: "수나롭다",
-    member: "김상민, 안영훈, 이예린, 이진형",
-  },
-});
 export interface ICategory {
   id: number;
   categoryIndex: number;

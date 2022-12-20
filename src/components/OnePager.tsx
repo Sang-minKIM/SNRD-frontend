@@ -1,6 +1,6 @@
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { categoryState, infoState } from "../atom";
+import { categoryState } from "../atom";
 import "@toast-ui/editor/dist/toastui-editor-viewer.css";
 import { Viewer } from "@toast-ui/react-editor";
 
@@ -18,7 +18,7 @@ const Container = styled.form`
   border: 1px solid #e0e0e0;
 `;
 
-const ProjectName = styled.input`
+const ProjectName = styled.span`
   border: none;
   display: block;
   margin: 30px auto;
@@ -29,7 +29,7 @@ const ProjectName = styled.input`
   text-align: center;
 `;
 
-const Member = styled.input`
+const Member = styled.span`
   border: none;
   display: block;
   height: 30px;
@@ -63,7 +63,6 @@ const ViewerWrapper = styled.div`
 `;
 
 export function OnePager() {
-  const info = useRecoilValue(infoState);
   const data = useRecoilValue(categoryState);
   // const rootRef = useRef<any>(null);
   // const [refState, setRefState] = useState(false); // 데이터가 로드되기전에 ref가 선언되어서 데이터가 로드된 후 재렌더링 해주기 위해 state를 선언함
@@ -78,8 +77,8 @@ export function OnePager() {
   return (
     <>
       <Container>
-        <ProjectName placeholder={info.name} />
-        <Member size={info.member.length + 10} placeholder={info.member} />
+        <ProjectName></ProjectName>
+        <Member></Member>
         {Object.keys(data).map((part) => (
           <Part key={part}>
             {data[part].map((topic, index) => (

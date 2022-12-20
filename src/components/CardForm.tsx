@@ -1,11 +1,24 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { putCategories, putProjectInfo, putTasks } from "../api";
-import { categoryState, dateState, newCardState, toDoState } from "../atom";
+import {
+  addProject,
+  getProfile,
+  postProfile,
+  putCategories,
+  putProjectInfo,
+  putTasks,
+} from "../api";
+import {
+  categoryState,
+  dateState,
+  emailState,
+  newCardState,
+  toDoState,
+} from "../atom";
 import { Calender } from "./Calender";
 
 const Form = styled.form`
@@ -116,6 +129,21 @@ const Duration = styled.input`
 interface IForm {
   topic: string;
   part: string;
+}
+interface IList {
+  project_id: number;
+  title: string;
+  teammates: string[];
+  teammates_name: string[];
+  duration: string;
+  introduction: string;
+}
+interface IData {
+  project_list: IList[];
+  user: {
+    name: string;
+    information: string;
+  };
 }
 
 export function NewCategoryForm() {
@@ -318,13 +346,129 @@ export function EditProjectInfo() {
   );
 }
 
+export function AddNewProject() {
+  const { userId } = useParams();
+  const email = useRecoilValue(emailState);
+  const [newCard, setNewCard] = useRecoilState(newCardState);
+  const [date, setDate] = useState(false);
+  const duration = useRecoilValue(dateState);
+
+  // const startDate = new Intl.DateTimeFormat("ko-KR", {
+  //   dateStyle: "full",
+  // }).format(duration[0].startDate);
+  // const endDate = new Intl.DateTimeFormat("ko-KR", {
+  //   dateStyle: "full",
+  // }).format(duration[0].endDate);
+
+  const startDate = duration[0].startDate?.toLocaleDateString("ko", {
+    dateStyle: "full",
+  });
+  const endDate = duration[0].endDate?.toLocaleDateString("ko", {
+    dateStyle: "full",
+  });
+
+  const mutation = useMutation(addProject, {
+    onSuccess: (data, variables, context) => {
+      console.log("success", data, variables, context);
+    },
+  });
+  const { register, handleSubmit } = useForm();
+  const onValid = ({
+    topic,
+    slogan,
+    team,
+  }: {
+    topic?: string;
+    slogan?: string;
+    team?: string;
+  }) => {
+    const teammates = team && team.split(",").map((v) => v.trim());
+    const posting = {
+      email,
+      title: topic,
+      teammates,
+      duration: `${startDate} ~ ${endDate}`,
+      slogan,
+    };
+    mutation.mutate({ userId, posting });
+    setNewCard(null);
+  };
+  return (
+    <Form onSubmit={handleSubmit(onValid)}>
+      <PopUpLabel>프로젝트 정보</PopUpLabel>
+      <Label>프로젝트명</Label>
+      <Title
+        {...register("topic", { required: true })}
+        placeholder="프로젝트 이름을 입력하세요."
+      />
+      <Label>기간설정</Label>
+      <DurationBox>
+        <Duration
+          value={`${startDate} ~ ${endDate}`}
+          type="button"
+          onClick={() => setDate(true)}
+        />
+        {date ? <Calender setCalender={setDate} /> : null}
+      </DurationBox>
+      <Label>슬로건</Label>
+      <Title
+        {...register("slogan")}
+        placeholder="프로젝트 슬로건이나 간단한 소개를 적어주세요."
+      />
+      <Label>팀원</Label>
+      <Title
+        {...register("team")}
+        placeholder="팀원의 이름을 입력하세요. (이진형, 안영훈, 이예린 ...)"
+      />
+
+      <Submit type="submit" value="확인" />
+    </Form>
+  );
+}
+
 export function EditProfile() {
   const [newCard, setNewCard] = useRecoilState(newCardState);
   const { register, handleSubmit } = useForm();
-  const onValid = () => {
+  const { userId } = useParams();
+
+  const { data, isLoading } = useQuery<IData>(
+    ["project", userId],
+    () => getProfile(userId),
+    {
+      onSuccess(data) {
+        console.dir(data);
+      },
+    }
+  );
+  const mutation = useMutation(postProfile, {
+    onSuccess: (data, variables, context) => {
+      console.log("success", data, variables, context);
+    },
+  });
+  const userInfo = data?.user.information
+    .split(",")
+    .map((value) => value.trim());
+
+  const onValid = ({
+    name,
+    age,
+    part,
+    univ,
+    quote,
+  }: {
+    name?: string;
+    age?: string;
+    part?: string;
+    univ?: string;
+    quote?: string;
+  }) => {
+    const information = [age, univ, part, quote].join();
+    mutation.mutate({ userId, name, information });
     setNewCard(null);
   };
-
+  useEffect(() => {
+    console.log(newCard);
+  }, [newCard]);
   return (
     <Form onSubmit={handleSubmit(onValid)}>
       <PopUpLabel>사용자 정보</PopUpLabel>
@@ -335,23 +479,23 @@ export function EditProfile() {
       <Label>이름</Label>
       <Title
         {...register("name", { required: true })}
-        placeholder="이름을 입력하세요."
+        placeholder={data?.user.name}
       />
       <Horizontal>
         <Column>
           <Label>나이</Label>
-          <Title {...register("age")} placeholder="00세" />
+          <Title {...register("age")} placeholder={userInfo && userInfo[0]} />
         </Column>
         <Column>
           <Label>파트</Label>
-          <Title {...register("part")} placeholder="Frontend" />
+          <Title {...register("part")} placeholder={userInfo && userInfo[2]} />
         </Column>
       </Horizontal>
 
       <Label>학교/직장</Label>
-      <Title {...register("univ")} placeholder="OO대학교" />
+      <Title {...register("univ")} placeholder={userInfo && userInfo[1]} />
       <Label>나를 표현하는 한줄</Label>
-      <Title {...register("quote")} placeholder="하늘이 내려준 천재" />
+      <Title {...register("quote")} placeholder={userInfo && userInfo[3]} />
 
       <Submit type="submit" value="확인" />
     </Form>
