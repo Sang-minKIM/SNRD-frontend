@@ -188,6 +188,10 @@ const ProjectInfo = styled.div`
   height: 300px;
   background-color: ${(props) => props.theme.white.veryDark};
   box-shadow: 0px 0px 4px 0 rgba(0, 0, 0, 0.2) inset;
+  overflow-y: scroll;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const Overlay = styled(motion.div)`
