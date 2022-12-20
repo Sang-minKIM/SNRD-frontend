@@ -3,13 +3,14 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { getProfile } from "../api";
 import editImg from "../assets/edit.svg";
-import { newCardState } from "../atom";
-import { EditProjectInfo } from "../components/CardForm";
+import { emailState, newCardState } from "../atom";
+import { EditProfile, EditProjectInfo } from "../components/CardForm";
 import { Loader } from "../components/Loader";
+import projectImg from "../assets/projectImg.png";
 
 const Container = styled.div`
   width: 100%;
@@ -30,11 +31,28 @@ const ProfileBoard = styled.div`
   min-width: 20px;
 `;
 
-const ProfileImg = styled.img`
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  background-color: #fff;
+const ProfileImg = styled.svg`
+  margin: 5px 0;
+  fill: ${(props) => props.theme.navy};
+  width: 50%;
+`;
+
+const UserEmail = styled.div`
+  width: 100%;
+  height: 40px;
+  padding: 5px 10px;
+  border-top: 2px solid ${(props) => props.theme.white.veryDark};
+  display: flex;
+  align-items: center;
+  color: ${(props) => props.theme.grey.darker};
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 20px;
+  svg {
+    margin-right: 10px;
+    height: 100%;
+    fill: ${(props) => props.theme.grey.darker};
+  }
 `;
 
 const UserInfoForm = styled.form`
@@ -55,28 +73,14 @@ const UserNameBox = styled.div`
 `;
 
 const EditProfileBtn = styled.button`
-  position: absolute;
-  right: 0;
   margin-bottom: 4px;
-  width: 40px;
+  width: 100%;
   height: 40px;
   border: none;
-  background-color: transparent;
+  border-radius: 10px;
+  background-color: ${(props) => props.theme.white.veryDark};
+  margin-top: 20px;
 `;
-
-const EditBtnImg = styled.img`
-  width: 100%;
-`;
-
-const UsernameInput = styled.input``;
-
-const UserAgeInput = styled.input``;
-
-const UserBelongInput = styled.input``;
-
-const UserPartInput = styled.input``;
-
-const QuotesInput = styled.input``;
 
 const UserInfoBox = styled.div``;
 
@@ -138,7 +142,7 @@ const ProjectList = styled.div`
   height: calc(100% - 34px);
   display: flex;
   justify-content: flex-start;
-  align-items: center;
+  align-items: flex-start;
   flex-wrap: wrap;
 
   gap: 50px;
@@ -146,7 +150,7 @@ const ProjectList = styled.div`
 
 const Project = styled.div`
   width: 45%;
-  height: 360px;
+  height: 400px;
   border-radius: 5px;
   box-shadow: 0px 0px 4px 0 rgba(0, 0, 0, 0.2);
   display: flex;
@@ -159,6 +163,7 @@ const Project = styled.div`
 `;
 
 const ProjectTitle = styled(Link)`
+  display: flex;
   width: auto;
   margin-left: 5%;
   height: 30px;
@@ -174,6 +179,10 @@ const ProjectTitle = styled(Link)`
 `;
 
 const ProjectInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
   margin-left: 5%;
   width: 90%;
   height: 300px;
@@ -183,7 +192,7 @@ const ProjectInfo = styled.div`
 
 const Overlay = styled(motion.div)`
   width: 100vw;
-  height: calc(100vh - 90px);
+  height: calc(100vh - 40px);
   position: absolute;
   display: flex;
   justify-content: center;
@@ -197,10 +206,63 @@ const NewCard = styled(motion.div)`
   border-radius: 5px;
   width: 40%;
   height: 80%;
-
   border: none;
   position: absolute;
-  top: 0;
+  top: 10%;
+`;
+const ColorBox = styled.div`
+  width: 20px;
+  height: 20px;
+  border-radius: 2px;
+  background-color: ${(props) => props.theme.navy};
+  margin-right: 5px;
+`;
+
+const Duration = styled.span`
+  color: ${(props) => props.theme.grey.darker};
+  width: auto;
+  margin-left: 5%;
+  height: 20px;
+  font-size: 10px;
+
+  padding-left: 35px;
+`;
+
+const ProjectImg = styled.img`
+  width: 90%;
+  margin-top: 20px;
+  margin-bottom: 10px;
+`;
+
+const ProjectSlogan = styled.span`
+  height: 30px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: ${(props) => props.theme.grey.darker};
+  font-weight: 600;
+`;
+
+const ProjectTeammates = styled.div`
+  height: 40px;
+  width: 90%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  flex-wrap: wrap;
+  color: ${(props) => props.theme.grey.darker};
+`;
+
+const ProjectTeammate = styled.span`
+  width: auto;
+  height: fit-content;
+  border-radius: 5px;
+  padding: 1px 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 interface IList {
@@ -232,8 +294,7 @@ const newCardVariant = {
 };
 
 export function Profile() {
-  // const [emailParams] = useSearchParams();
-  // const email = emailParams.get("email");
+  const email = useRecoilValue(emailState);
   const [newCard, setNewCard] = useRecoilState(newCardState);
   const { userId } = useParams();
   const [edit, setEdit] = useState(false);
@@ -257,28 +318,40 @@ export function Profile() {
       ) : (
         <Container>
           <ProfileBoard>
-            <ProfileImg />
+            <ProfileImg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 512 512"
+            >
+              <path d="M399 384.2C376.9 345.8 335.4 320 288 320H224c-47.4 0-88.9 25.8-111 64.2c35.2 39.2 86.2 63.8 143 63.8s107.8-24.7 143-63.8zM512 256c0 141.4-114.6 256-256 256S0 397.4 0 256S114.6 0 256 0S512 114.6 512 256zM256 272c39.8 0 72-32.2 72-72s-32.2-72-72-72s-72 32.2-72 72s32.2 72 72 72z" />
+            </ProfileImg>
             <UserInfoForm>
               <UserNameBox>
                 <Username>{data?.user.name}</Username>
-                <EditProfileBtn
-                  type="button"
-                  onClick={() => setEdit((curr) => !curr)}
-                >
-                  <EditBtnImg src={editImg} />
-                </EditProfileBtn>
               </UserNameBox>
+              <UserEmail>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                  <path d="M64 112c-8.8 0-16 7.2-16 16v22.1L220.5 291.7c20.7 17 50.4 17 71.1 0L464 150.1V128c0-8.8-7.2-16-16-16H64zM48 212.2V384c0 8.8 7.2 16 16 16H448c8.8 0 16-7.2 16-16V212.2L322 328.8c-38.4 31.5-93.7 31.5-132 0L48 212.2zM0 128C0 92.7 28.7 64 64 64H448c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128z" />
+                </svg>
+                {email}
+              </UserEmail>
               <UserInfoBox>
                 <UserAge>{userInfo && userInfo[0]}</UserAge>
                 <UserBelong>{userInfo && userInfo[1]}</UserBelong>
                 <UserPart>{userInfo && userInfo[2]}</UserPart>
                 <Quotes>{userInfo && userInfo[3]}</Quotes>
               </UserInfoBox>
+              <EditProfileBtn
+                type="button"
+                onClick={() => setNewCard("editProfile")}
+              >
+                프로필 편집
+              </EditProfileBtn>
             </UserInfoForm>
           </ProfileBoard>
           <ProjectBoard>
             <ProjectMenu>
               <ProjectMenuLabel>{data?.user.name}의 프로젝트</ProjectMenuLabel>
+
               <AddProject onClick={() => setNewCard("addProject")}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                   <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
@@ -289,9 +362,20 @@ export function Profile() {
               {data?.project_list.map((project) => (
                 <Project key={project.project_id}>
                   <ProjectTitle to={`/main/${project.project_id}`}>
+                    <ColorBox />
                     {project.title}
                   </ProjectTitle>
-                  <ProjectInfo></ProjectInfo>
+                  <Duration>{project.duration}</Duration>
+                  <ProjectInfo>
+                    <ProjectImg src={projectImg} />
+                    <ProjectSlogan>{`"${project.introduction}"`}</ProjectSlogan>
+                    <ProjectTeammates>
+                      {`팀원: `}
+                      {project.teammates.map((teammate) => (
+                        <ProjectTeammate>{teammate}</ProjectTeammate>
+                      ))}
+                    </ProjectTeammates>
+                  </ProjectInfo>
                 </Project>
               ))}
             </ProjectList>
@@ -311,6 +395,24 @@ export function Profile() {
                 exit="exit"
               >
                 <EditProjectInfo />
+              </NewCard>
+            </Overlay>
+          ) : null}
+          {newCard === "editProfile" ? (
+            <Overlay
+              variants={overlayVariant}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              onClick={() => setNewCard(null)}
+            >
+              <NewCard
+                variants={newCardVariant}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+              >
+                <EditProfile />
               </NewCard>
             </Overlay>
           ) : null}

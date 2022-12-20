@@ -1,14 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import {
-  Link,
-  useMatch,
-  useMatches,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
+import { Link, useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-
 import logo from "../assets/logo.svg";
 import introBtn from "../assets/introBtn.svg";
 import loginBtn from "../assets/loginBtn.svg";
@@ -143,7 +134,7 @@ function Header() {
   const joinMatch = useMatch("/join");
   const introMatch = useMatch("/");
   const projectMatch = useMatch("/main/:projectId");
-  const boardMatch = useMatch("/board/:projectId");
+  const boardMatch = useMatch("/boards/:projectId");
   return (
     <>
       <Nav>

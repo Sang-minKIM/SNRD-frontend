@@ -67,6 +67,7 @@ export function Write() {
     },
     onSuccess: (data, variables, context) => {
       console.log("success", data, variables, context);
+      navigate(`/main/${projectId}`);
     },
   });
 

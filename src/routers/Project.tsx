@@ -1,17 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { useParams } from "react-router-dom";
-
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { getCategories } from "../api";
 import { categoryState, ICategoryState, newCardState } from "../atom";
-
 import Categories from "../components/Categories";
-
 import Navigation from "../components/Navigation";
 import { EditProjectInfo, NewCategoryForm } from "../components/CardForm";
-
 import { OnePager } from "../components/OnePager";
 import { Loader } from "../components/Loader";
 
